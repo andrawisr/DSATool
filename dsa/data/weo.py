@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import io
 import json
+import re
 from dataclasses import dataclass
 from datetime import date, datetime
 from pathlib import Path
@@ -87,7 +88,7 @@ def _fetch_sdmx(countries: list[str], codes: list[str], start: int, timeout: int
         return pd.DataFrame()  # the IMF returns 404 when no data matches
     resp.raise_for_status()
     raw = pd.read_csv(io.StringIO(resp.text), low_memory=False)
-    keep = ["COUNTRY", "INDICATOR", "TIME_PERIOD", "OBS_VALUE", "LATEST_ACTUAL_ANNUAL_DATA"]
+    keep = ["COUNTRY", "INDICATOR", "TIME_PERIOD", "OBS_VALUE", "LATEST_ACTUAL_ANNUAL_DATA", "START_END_MONTHS_OF_REPORTING_YEAR"]
     return raw[[c for c in keep if c in raw.columns]]
 
 
@@ -114,12 +115,54 @@ def _build_table(raw: pd.DataFrame, iso3: str) -> tuple[pd.DataFrame, int | None
     if "LATEST_ACTUAL_ANNUAL_DATA" in country_rows:
         # Use the year the debt series ends its outturn data; fall back to growth.
         for code in ("GGXWDG_NGDP", "NGDP_RPCH"):
-            vals = country_rows.loc[country_rows["INDICATOR"] == code, "LATEST_ACTUAL_ANNUAL_DATA"].dropna()
-            if not vals.empty:
-                last_actual = int(vals.iloc[0])
+            rows = country_rows[country_rows["INDICATOR"] == code].dropna(subset=["LATEST_ACTUAL_ANNUAL_DATA"])
+            months = rows.get("START_END_MONTHS_OF_REPORTING_YEAR", pd.Series(dtype=str))
+            parsed = [
+                y
+                for y in (parse_year(v, m) for v, m in zip(rows["LATEST_ACTUAL_ANNUAL_DATA"], months.reindex(rows.index)))
+                if y is not None
+            ]
+            if parsed:
+                last_actual = parsed[0]
                 break
+    if last_actual is None and "debt" in table:
+        # No usable marker: assume outturn data runs to last year.
+        last_actual = min(date.today().year - 1, int(table["debt"].last_valid_index() or date.today().year - 1))
 
     return add_derived_series(table), last_actual
+
+
+MONTHS = {m: i for i, m in enumerate(
+    ["january", "february", "march", "april", "may", "june", "july",
+     "august", "september", "october", "november", "december"], start=1)}
+
+
+def parse_year(value, months: str | None = None) -> int | None:
+    """Turn the IMF's 'latest actual data' marker into a WEO year.
+
+    Usually it's a plain year (2025), but about 30 countries report by fiscal
+    year, with labels like 'FY2024/25'. Which calendar year the WEO files a
+    fiscal year under depends on when it starts (`months`, e.g. "July/June"):
+
+      * starts January-June (India, Iran: April/March): most months fall in
+        the first year, so FY2024/25 -> 2024;
+      * starts July or later (Egypt, Pakistan: July/June; Thailand:
+        October/September): filed under the year it ends, FY2024/25 -> 2025.
+
+    Without the months, we fall back to the start year: if that is a year too
+    early, the last actual year just becomes the first projection year, which
+    leaves the baseline (it follows WEO debt) unchanged.
+    """
+    s = str(value).strip()
+    if re.fullmatch(r"\d{4}(\.0)?", s):
+        return int(float(s))
+    m = re.search(r"(\d{4})\s*/\s*\d{2,4}", s)
+    if m:
+        start = int(m.group(1))
+        first_month = MONTHS.get(str(months).split("/")[0].strip().lower()) if months else None
+        return start + 1 if first_month and first_month >= 7 else start
+    m = re.search(r"(\d{4})", s)
+    return int(m.group(1)) if m else None
 
 
 def add_derived_series(t: pd.DataFrame) -> pd.DataFrame:

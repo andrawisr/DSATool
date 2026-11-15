@@ -60,3 +60,16 @@ def test_fx_share_table_lookup():
     assert lookup("BRA")["fx_share"] < 15  # Brazil borrows mostly in reais
     assert lookup("DEU")["fx_share"] == 0.0  # euro is Germany's own currency
     assert lookup("XXX")["fx_share"] is None  # unknown country -> no estimate
+
+
+def test_fiscal_year_markers():
+    from dsa.data.weo import parse_year
+
+    assert parse_year("2025") == 2025
+    assert parse_year(2025.0) == 2025
+    assert parse_year("FY2024/25", "July/June") == 2025  # Egypt: filed under the year it ends
+    assert parse_year("FY2024/25", "October/September") == 2025  # Thailand
+    assert parse_year("FY2024/25", "April/March") == 2024  # India: filed under the year it starts
+    assert parse_year("FY2024/25") == 2024  # months unknown: start year
+    assert parse_year("FY2025/2026", "April/March") == 2025
+    assert parse_year("n/a") is None
