@@ -82,3 +82,13 @@ def test_maturity_table_lookup():
     assert 10 < bra["maturing_share"] < 50 and bra["quality"] == "high"
     unknown = lookup("XXX")
     assert unknown["maturing_share"] == DEFAULT_SHARE and unknown["quality"] == "none"
+
+
+def test_article_iv_overrides_win():
+    from dsa.data import fx_share, maturity
+
+    egy_fx, egy_mat = fx_share.lookup("EGY"), maturity.lookup("EGY")
+    assert egy_fx["method"] == "override" and egy_fx["fx_share"] == 40.0
+    assert egy_mat["method"] == "override" and egy_mat["maturing_share"] == 40.0
+    assert egy_mat["automatic_estimate"] < 30  # the World Bank-based estimate it replaced
+    assert fx_share.lookup("BRA")["method"] != "override"

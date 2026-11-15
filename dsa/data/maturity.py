@@ -170,6 +170,19 @@ def build_table() -> pd.DataFrame:
 
 
 def lookup(iso3: str) -> dict:
+    """The estimate for one country. A figure in country_overrides.csv
+    (e.g. from an Article IV) takes priority."""
+    from . import overrides
+
+    estimate = _lookup_estimate(iso3)
+    o = overrides.get(iso3, "maturing_share")
+    if o is None:
+        return estimate
+    return {"iso3": iso3, "maturing_share": o["value"], "method": "override", "source": o["source"], "as_of": o["as_of"],
+            "quality": o["quality"], "automatic_estimate": estimate["maturing_share"]}
+
+
+def _lookup_estimate(iso3: str) -> dict:
     default = {"iso3": iso3, "maturing_share": DEFAULT_SHARE, "method": "default", "source": "Default of 25%", "as_of": "", "quality": "none"}
     if not TABLE_PATH.exists():
         return default

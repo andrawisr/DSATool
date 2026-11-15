@@ -61,6 +61,16 @@ def cached_fan(_baseline, history, key):
     return fan_chart(_baseline, history)
 
 
+def describe(info: dict, field: str) -> str:
+    """Caption under an input: where its starting value came from."""
+    label = "Article IV" if info.get("method") == "override" else "Estimate"
+    text = f"{label}: {info[field]:.1f}%, {info['source']}" + (f", {info['as_of']}" if info.get("as_of") else "")
+    if info.get("method") == "override":
+        auto = info.get("automatic_estimate")
+        return text + (f". Automatic estimate was {auto:.1f}%." if auto is not None else ".")
+    return text + f" (quality: {info['quality']})"
+
+
 # ---------------------------------------------------------------- sidebar: inputs
 names = countries()
 codes = list(names) or ["BRA"]
@@ -86,7 +96,7 @@ fx = st.sidebar.number_input("Foreign-currency share of debt (%)", 0.0, 100.0, f
 if fx_info["fx_share"] is None:
     st.sidebar.warning("No estimate found for this country. Enter the share from the latest Article IV DSA.")
 else:
-    st.sidebar.caption(f"Estimate: {fx_default:.1f}%, {fx_info['source']}" + (f", {fx_info['as_of']}" if fx_info.get("as_of") else "") + f" (quality: {fx_info['quality']})")
+    st.sidebar.caption(describe(fx_info, "fx_share"))
 
 mat_info = maturity.lookup(iso3)
 repricing = st.sidebar.slider(
@@ -94,7 +104,7 @@ repricing = st.sidebar.slider(
     key=f"mat_{iso3}",
     help="Sets how fast an interest rate shock feeds into the average interest rate, and the amortisation in gross financing needs. 25% means an average maturity of about 4 years.",
 )
-mat_note = f"Estimate: {mat_info['maturing_share']:.0f}%, {mat_info['source']}" + (f", {mat_info['as_of']}" if mat_info.get("as_of") else "") + f" (quality: {mat_info['quality']})"
+mat_note = describe(mat_info, "maturing_share")
 if mat_info["quality"] == "none":
     st.sidebar.warning("No maturity data for this country: using 25%. Check the Article IV for debt falling due within a year.")
 else:

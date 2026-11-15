@@ -248,7 +248,19 @@ def load_table() -> pd.DataFrame:
 
 
 def lookup(iso3: str) -> dict:
-    """The estimate for one country, as a dict (fx_share is None when unknown)."""
+    """The estimate for one country, as a dict (fx_share is None when unknown).
+    A figure in country_overrides.csv (e.g. from an Article IV) takes priority."""
+    from . import overrides
+
+    estimate = _lookup_estimate(iso3)
+    o = overrides.get(iso3, "fx_share")
+    if o is None:
+        return estimate
+    return {"iso3": iso3, "fx_share": o["value"], "method": "override", "source": o["source"], "as_of": o["as_of"],
+            "quality": o["quality"], "automatic_estimate": estimate["fx_share"]}
+
+
+def _lookup_estimate(iso3: str) -> dict:
     if not TABLE_PATH.exists():
         return {"iso3": iso3, "fx_share": None, "method": "missing", "source": "Estimates table not built yet", "as_of": "", "quality": "none"}
     t = load_table()
