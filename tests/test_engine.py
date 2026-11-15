@@ -118,3 +118,48 @@ def test_presets_and_fan_chart_run():
     assert (fan.standard["p95"] >= fan.standard["p5"]).all()
     assert fan.width > 0
     assert 0 <= fan.prob_not_stabilising <= 100
+
+
+def test_depreciation_raises_foreign_currency_debt_service():
+    t, last = _toy_weo()
+    a = baseline_from_weo(t, last, fx_share=60)
+    base = debt_path(a)
+    shocked = debt_path(custom(a, CustomShock(depreciation_pct=30, interactions=False)))
+    y = a.years[1]
+    # Interest and repayments on foreign-currency debt cost 30% more in local currency.
+    assert shocked.loc[y, "gross_financing_need"] > base.loc[y, "gross_financing_need"] + 1
+
+
+def test_current_account_shock_depreciates_and_raises_gfn():
+    t, last = _toy_weo()
+    a = baseline_from_weo(t, last, fx_share=50)
+    s = CustomShock(current_account_pp=-2, depreciation_per_ca_pp=5, interactions=False)
+    shocked = custom(a, s)
+    y = a.years[1]
+    assert shocked.fx_depreciation[y] == pytest.approx(a.fx_depreciation[y] + 10)
+    assert debt_path(shocked).loc[y, "gross_financing_need"] > debt_path(a).loc[y, "gross_financing_need"]
+
+
+def test_oil_moves_current_account_by_net_oil_exports():
+    from dsa.shocks import current_account_change
+
+    t, last = _toy_weo()
+    a = baseline_from_weo(t, last, fx_share=30)
+    importer = CustomShock(oil_price_pct=50, oil_role="importer", net_oil_exports=-4)
+    change = current_account_change(a, importer)
+    assert change[a.years[1]] == pytest.approx(-2.0)  # -4% of GDP x 50%
+    assert change[a.years[0]] == 0.0
+
+
+def test_external_financing_stop_shortens_maturity():
+    t, last = _toy_weo()
+    a = baseline_from_weo(t, last, fx_share=30, repricing_share=20)
+    s = CustomShock(external_stop=True, foreign_private_share=30, foreign_rollover_pct=67, stop_years=(2, 3))
+    shocked = custom(a, s)
+    y2, y3, y4, y5 = a.years[1:5]
+    new = (1 - 0.67) * 0.30 * 0.20 * 100  # % of debt replaced each stress year
+    assert shocked.extra_maturing[y3] == pytest.approx(new)
+    assert shocked.extra_maturing[y4] == pytest.approx(2 * new)
+    assert shocked.extra_maturing[y5] == 0.0
+    out, base = debt_path(shocked), debt_path(a)
+    assert out.loc[y4, "gross_financing_need"] > base.loc[y4, "gross_financing_need"]

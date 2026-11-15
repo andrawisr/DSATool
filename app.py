@@ -13,7 +13,8 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from dsa.data import fx_share as fxs
-from dsa.data import maturity
+from dsa.data import maturity, oil_trade
+from dsa.data import overrides as country_overrides
 from dsa.data.weo import COUNTRY_SERIES, DERIVED_SERIES, WORLD_SERIES, get_country, list_countries
 from dsa.engine import baseline_from_weo, debt_path, historical_drivers, historical_stats
 from dsa.fanchart import fan_chart
@@ -34,7 +35,8 @@ TABLE_ROWS = {
     "exchange_rate": "    of which: exchange rate",
     "other_flows": "  Residual / other flows",
     "gross_financing_need": "Gross financing need",
-    "interest_bill": "Interest bill",
+    "interest_bill": "  of which: interest",
+    "amortisation": "  of which: amortisation",
     "debt_stabilising_pb": "Debt-stabilising primary balance",
 }
 COLOURS = {"baseline": "#1f4e79", "custom": "#c0392b", "historical": "#7f8c8d"}
@@ -119,7 +121,13 @@ if override_r:
 horizon = st.sidebar.slider("Projection horizon (years)", 5, 10, 10)
 
 st.sidebar.subheader("Your shocks")
-oil_role = st.sidebar.radio("Oil", ["exporter", "importer", "none"], index=0 if iso3 in OIL_EXPORTERS else 1, horizontal=True, key=f"oil_{iso3}")
+oil_info = oil_trade.lookup(iso3)
+net_oil = oil_info["net_oil_exports"]
+if net_oil is not None:  # default role from the country's actual fuel trade
+    role_index = 0 if net_oil > 1 else 1 if net_oil < -0.5 else 2
+else:
+    role_index = 0 if iso3 in OIL_EXPORTERS else 1
+oil_role = st.sidebar.radio("Oil (fiscal channel)", ["exporter", "importer", "none"], index=role_index, horizontal=True, key=f"oil_{iso3}")
 with st.sidebar.expander("Growth, rates, primary balance", expanded=True):
     g_pp = st.slider("Real growth (pp)", -10.0, 5.0, 0.0, 0.5)
     g_yrs = st.slider("Growth shock years", 1, horizon, (2, 3))
@@ -138,6 +146,34 @@ with st.sidebar.expander("Exchange rate and oil", expanded=True):
         help="IMF default (MAC SRDSF Table 5): exporters lose 0.5pp of revenue per 10% fall; importers spend 0.9pp more per 10% rise.",
     )
     oil_growth = st.number_input("Growth impact per 10% oil move (pp)", 0.0, 5.0, 0.0, 0.1, help="The IMF paper gives no default; set your own.")
+with st.sidebar.expander("Current account and external financing", expanded=True):
+    ca_pp = st.slider("Current account (pp of GDP)", -10.0, 5.0, 0.0, 0.25, help="Negative = a wider deficit (or smaller surplus) than the WEO baseline.")
+    ca_yrs = st.slider("Current account shock years", 1, horizon, (2, 3))
+    oil_ca = st.checkbox("Oil price also moves the current account", True, disabled=net_oil is None)
+    if net_oil is not None:
+        st.caption(
+            f"Net fuel exports: {net_oil:+.1f}% of GDP ({oil_info['source']}, {oil_info['as_of']}). "
+            f"A 10% oil rise moves the current account by {net_oil / 10:+.2f}pp of GDP."
+        )
+    dep_per_ca = st.number_input(
+        "Depreciation per 1pp of GDP current account worsening (%)", 0.0, 30.0, 5.0, 0.5,
+        help="How much the currency weakens to close a wider current account gap. No IMF default: your judgement (lower if reserves or official financing cover the gap).",
+    )
+    ext_stop = st.checkbox(
+        "Foreign financing stop", False,
+        help="IMF MAC SRDSF GFN module stress: foreign private investors roll over only part of their maturing holdings; the rest is replaced by one-year domestic borrowing at a higher rate.",
+    )
+    fp_override = country_overrides.get(iso3, "foreign_private_share")
+    fp_share = st.number_input(
+        "Debt held by foreign private investors (% of total)", 0.0, 100.0, fp_override["value"] if fp_override else 0.0, 1.0, key=f"fp_{iso3}",
+    )
+    if fp_override:
+        st.caption(f"Article IV: {fp_override['source']}")
+    elif ext_stop:
+        st.caption("No figure on file for this country: enter it from the Article IV (debt by holder chart).")
+    rollover = st.slider("Foreign rollover rate in stress (%)", 0, 100, 67, 1, help="IMF default: 67%.")
+    stop_yrs = st.slider("Financing stop years", 1, horizon, (2, 3))
+    premium = st.slider("Extra cost of replacement borrowing (bp)", 0, 1500, 200, 25)
 with st.sidebar.expander("Other"):
     cl = st.slider("Contingent liability (% of GDP, one-off)", 0.0, 30.0, 0.0, 0.5)
     cl_yr = st.slider("Contingent liability in year", 1, horizon, 2)
@@ -150,12 +186,15 @@ shock = CustomShock(
     primary_balance_pp=pb_pp, pb_years=pb_yrs, depreciation_pct=dep, depreciation_year=dep_yr,
     oil_price_pct=oil_pct, oil_years=oil_yrs, oil_role=oil_role, oil_fiscal_pp_per_10pct=oil_sens,
     oil_growth_pp_per_10pct=oil_growth, contingent_liability_pp=cl, contingent_year=cl_yr, interactions=interactions,
+    current_account_pp=ca_pp, ca_years=ca_yrs, oil_moves_current_account=oil_ca, net_oil_exports=net_oil,
+    depreciation_per_ca_pp=dep_per_ca, external_stop=ext_stop, stop_years=stop_yrs, foreign_private_share=fp_share,
+    foreign_rollover_pct=rollover, replacement_premium_bp=premium,
 )
 shocked = custom(baseline, shock)
 base_out, shock_out = debt_path(baseline), debt_path(shocked)
 stats = historical_stats(table, last)
 history = historical_drivers(table, last)
-has_shock = any([g_pp, r_bp, pb_pp, dep, oil_pct and oil_role != "none", cl])
+has_shock = any([g_pp, r_bp, pb_pp, dep, oil_pct, cl, ca_pp, ext_stop and fp_share])
 
 hist_years = table.loc[last - 9 : last, "debt"]
 
@@ -201,6 +240,9 @@ with tab_paths:
             "Effective interest rate (%)": baseline.effective_rate, "Your scenario: interest rate": shocked.effective_rate,
             "Primary balance (% GDP)": baseline.primary_balance, "Your scenario: primary balance": shocked.primary_balance,
             "Depreciation (%)": baseline.fx_depreciation, "Your scenario: depreciation": shocked.fx_depreciation,
+            "Current account (% GDP)": baseline.current_account if baseline.current_account is not None else pd.Series(dtype=float),
+            "Your scenario: current account": shocked.current_account if shocked.current_account is not None else pd.Series(dtype=float),
+            "Gross financing need (% GDP)": base_out["gross_financing_need"], "Your scenario: gross financing need": shock_out["gross_financing_need"],
         }
     ).T
     show.columns = [yr_label(c) for c in show.columns]

@@ -9,6 +9,12 @@ papers specify knock-on effects between variables, we apply them:
   inflation, a weaker primary balance raises borrowing costs).
 * MAC SRDSF review (2021), Table 5: commodity price shock (fiscal impact of
   oil price moves) and natural disaster shock.
+* MAC SRDSF review (2021), para. 58 and footnote 40: the GFN module's
+  "holder shock", where foreign private investors roll over only 67% of
+  their maturing claims and the rest must be refinanced at home.
+
+The balance-of-payments channel (current account -> exchange rate) has no
+IMF default sensitivity; it is a judgement input, set in the app.
 
 Shocked years are given as positions in the projection: year 1 is the first
 projection year. The IMF's standard tests hit years 2 and 3.
@@ -31,6 +37,9 @@ RATE_PER_PB_WORSENING = 0.25  # +25bp borrowing cost per 1pp of GDP weaker prima
 # Commodity shock fiscal impact, MAC SRDSF 2021, Table 5 (Spatafora and Samake, 2012).
 EXPORTER_REVENUE_PER_10PCT = 0.5  # revenue falls 0.5pp of GDP per 10% fall in oil price
 IMPORTER_SPENDING_PER_10PCT = 0.9  # spending rises 0.9pp of GDP per 10% rise in oil price
+
+# GFN module holder shock, MAC SRDSF 2021, footnote 40.
+FOREIGN_ROLLOVER_IN_STRESS = 67.0  # % of maturing claims foreign private investors roll over
 
 
 def _years(a: Assumptions, positions: list[int]) -> list[int]:
@@ -57,6 +66,18 @@ class CustomShock:
     oil_growth_pp_per_10pct: float = 0.0  # knock-on to growth (paper gives no default)
     contingent_liability_pp: float = 0.0  # one-off jump in debt, % of GDP
     contingent_year: int = 2
+    # Balance of payments: current account -> exchange rate.
+    current_account_pp: float = 0.0  # change in current account, pp of GDP (negative = worse)
+    ca_years: tuple[int, int] = (2, 3)
+    oil_moves_current_account: bool = True  # oil price shock also moves the current account
+    net_oil_exports: float | None = None  # % of GDP (negative = net importer)
+    depreciation_per_ca_pp: float = 5.0  # % depreciation per 1pp of GDP current account worsening (judgement)
+    # External financing stop (MAC SRDSF GFN module holder shock).
+    external_stop: bool = False
+    stop_years: tuple[int, int] = (2, 3)
+    foreign_private_share: float = 0.0  # % of debt held by foreign private investors
+    foreign_rollover_pct: float = FOREIGN_ROLLOVER_IN_STRESS
+    replacement_premium_bp: float = 200.0  # extra cost of the domestic borrowing that replaces it
     interactions: bool = True  # apply the IMF knock-on effects
 
 
@@ -141,7 +162,67 @@ def custom(a: Assumptions, s: CustomShock) -> Assumptions:
     if s.contingent_liability_pp:
         for y in _years(out, [s.contingent_year]):
             out.other_flows[y] += s.contingent_liability_pp
+
+    ca_change = current_account_change(out, s)
+    if ca_change.any():
+        apply_current_account_shock(out, ca_change, s.depreciation_per_ca_pp, s.interactions)
+
+    if s.external_stop and s.foreign_private_share > 0:
+        apply_external_financing_stop(
+            out, _span(out, s.stop_years), s.foreign_private_share, s.foreign_rollover_pct, s.replacement_premium_bp
+        )
     return out
+
+
+def current_account_change(a: Assumptions, s: CustomShock) -> pd.Series:
+    """Change in the current account (pp of GDP) from the direct shock and from oil."""
+    change = pd.Series(0.0, index=a.years)
+    for y in _span(a, s.ca_years):
+        change[y] += s.current_account_pp
+    if s.oil_moves_current_account and s.oil_price_pct and s.net_oil_exports is not None:
+        # An oil price change moves the oil trade balance in proportion to its size.
+        for y in _span(a, s.oil_years):
+            change[y] += s.net_oil_exports * s.oil_price_pct / 100
+    return change
+
+
+def apply_current_account_shock(a: Assumptions, change: pd.Series, dep_per_pp: float, interactions: bool = True) -> None:
+    """A weaker current account has to be financed; we assume it is closed by a
+    depreciation of `dep_per_pp` % per 1pp of GDP (an improvement appreciates),
+    with the usual pass-through to inflation."""
+    if a.current_account is not None:
+        a.current_account = a.current_account.add(change, fill_value=0.0)
+    for y, d in change.items():
+        if not d:
+            continue
+        dep = -d * dep_per_pp
+        a.fx_depreciation[y] += dep
+        if interactions:
+            a.deflator_growth[y] += FX_PASS_THROUGH * dep
+
+
+def apply_external_financing_stop(
+    a: Assumptions, years: list[int], foreign_private_share: float, rollover_pct: float, premium_bp: float
+) -> None:
+    """Foreign private investors roll over only `rollover_pct`% of what matures
+    in the stress years (MAC SRDSF GFN module). The rest is refinanced at home
+    in one-year bills: it falls due again the following year (raising gross
+    financing needs) and costs `premium_bp` more while it is outstanding."""
+    if a.extra_maturing is None:
+        a.extra_maturing = pd.Series(0.0, index=a.years)
+    m = a.repricing_share / 100
+    new_each_year = (1 - rollover_pct / 100) * foreign_private_share / 100 * m  # share of the debt stock
+    replaced = 0.0  # share of the debt stock in short-term replacement borrowing
+    ys = a.years
+    for i, y in enumerate(ys):
+        if y in years:
+            replaced += new_each_year
+            if i + 1 < len(ys):
+                a.extra_maturing[ys[i + 1]] += replaced * 100  # the bills fall due next year
+        elif replaced and ys[i - 1] not in years:
+            replaced = 0.0  # after the stress, the bills are refinanced at normal terms
+        if replaced:
+            a.effective_rate[y] += premium_bp / 100 * replaced
 
 
 # ---------------------------------------------------------------- IMF presets

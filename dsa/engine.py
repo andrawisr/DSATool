@@ -42,6 +42,8 @@ class Assumptions:
     repricing_share: float = 25.0  # % of the debt stock maturing / repricing each year
     expenditure: pd.Series | None = None  # primary expenditure, % of GDP (used by shocks)
     oil_price: pd.Series | None = None  # US$/bbl (used by shocks)
+    current_account: pd.Series | None = None  # % of GDP (shown, and moved by balance-of-payments shocks)
+    extra_maturing: pd.Series | None = None  # % of last year's debt falling due on top of repricing_share
     notes: list[str] = field(default_factory=list)
 
     @property
@@ -50,7 +52,7 @@ class Assumptions:
 
     def copy(self, **changes) -> "Assumptions":
         series = {k: getattr(self, k).copy() for k in DRIVERS}
-        for opt in ("expenditure", "oil_price"):
+        for opt in ("expenditure", "oil_price", "current_account", "extra_maturing"):
             if getattr(self, opt) is not None:
                 series[opt] = getattr(self, opt).copy()
         return replace(self, **{**series, "notes": list(self.notes), **changes})
@@ -69,8 +71,12 @@ def debt_path(a: Assumptions) -> pd.DataFrame:
         automatic = parts["real_interest_rate"] + parts["real_gdp_growth"] + parts["exchange_rate"]
         debt = debt_prev + automatic - pb + sfa
         denom = (1 + g) * (1 + pi)
-        interest = r * debt_prev / denom  # interest bill, % of this year's GDP
-        amortisation = m * debt_prev / denom  # approximation: a fixed share of debt falls due
+        # Foreign-currency interest and repayments cost more in local currency
+        # after a depreciation (the same revaluation as in the a*e*(1+r) term).
+        fx_factor = 1 + alpha * e
+        maturing = m + (a.extra_maturing[y] / 100 if a.extra_maturing is not None else 0.0)
+        interest = r * debt_prev * fx_factor / denom  # interest bill, % of this year's GDP
+        amortisation = maturing * debt_prev * fx_factor / denom  # share of debt falling due this year
         rows.append(
             {
                 "year": y,
@@ -83,6 +89,7 @@ def debt_path(a: Assumptions) -> pd.DataFrame:
                 **parts,
                 "other_flows": sfa,
                 "interest_bill": interest,
+                "amortisation": amortisation,
                 "gross_financing_need": -pb + interest + amortisation,
                 # Primary balance that would have kept debt / GDP flat this year.
                 "debt_stabilising_pb": automatic + sfa,
@@ -142,6 +149,8 @@ def baseline_from_weo(
     r, g, pi, e, pb = (series(c) for c in ["effective_rate", "real_growth", "deflator_growth", "fx_depreciation", "primary_balance"])
     exp = series("expenditure") - t["interest"].reindex(years).ffill().fillna(0) if "expenditure" in t else None
     oil = series("oil_price") if "oil_price" in t else None
+    # Current account is for display and BoP shocks only: no note if it's missing.
+    ca = t["current_account"].reindex(years).ffill() if "current_account" in t else None
 
     a = Assumptions(
         initial_debt=float(t.loc[last_actual_year, "debt"]),
@@ -155,6 +164,7 @@ def baseline_from_weo(
         repricing_share=repricing_share,
         expenditure=exp,
         oil_price=oil,
+        current_account=ca,
         notes=notes,
     )
     # Back out the residual year by year so the baseline matches WEO debt:

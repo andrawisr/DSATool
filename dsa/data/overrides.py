@@ -7,7 +7,7 @@ Article IV, add a row to `country_overrides.csv`:
 
     iso3, field, value, source, as_of
 
-`field` is `fx_share` or `maturing_share`. Overrides always win over the
+`field` is `fx_share`, `maturing_share`, `foreign_private_share` or `net_oil_exports`. Overrides always win over the
 automatic estimates, and the app shows their source.
 """
 
