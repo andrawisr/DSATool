@@ -34,8 +34,8 @@ COUNTRY_SERIES = {
     "NGDP_RPCH": ("real_growth", "Real GDP growth, %"),
     "NGDP_D": ("deflator_index", "GDP deflator, index"),
     "PCPIPCH": ("cpi_inflation", "CPI inflation (average), %"),
-    "NGDP": ("ngdp_lcu", "Nominal GDP, local currency (billions)"),
-    "NGDPD": ("ngdp_usd", "Nominal GDP, US$ (billions)"),
+    "NGDP": ("ngdp_lcu", "Nominal GDP, local currency"),
+    "NGDPD": ("ngdp_usd", "Nominal GDP, US$"),
     "BCA_NGDPD": ("current_account", "Current account balance, % of GDP"),
 }
 WORLD_SERIES = {
@@ -151,24 +151,24 @@ def _meta_path(cache_dir: Path, iso3: str) -> Path:
     return cache_dir / f"weo_{iso3}.json"
 
 
-def _read_cache(cache_dir: Path, iso3: str, max_age_days: int) -> CountryData | None:
+def _read_cache(cache_dir: Path, iso3: str, max_age_days: int, start: int) -> CountryData | None:
     csv, meta = _cache_path(cache_dir, iso3), _meta_path(cache_dir, iso3)
     if not (csv.exists() and meta.exists()):
         return None
     info = json.loads(meta.read_text())
     age = (date.today() - date.fromisoformat(info["downloaded"])).days
-    if age > max_age_days:
-        return None
+    if age > max_age_days or info.get("start", 9999) > start:
+        return None  # too old, or doesn't go back far enough
     table = pd.read_csv(csv, index_col="year")
     return CountryData(iso3, info["name"], table, info["last_actual_year"], info["downloaded"])
 
 
-def _write_cache(cache_dir: Path, data: CountryData) -> None:
+def _write_cache(cache_dir: Path, data: CountryData, start: int) -> None:
     cache_dir.mkdir(parents=True, exist_ok=True)
     data.table.to_csv(_cache_path(cache_dir, data.iso3))
     _meta_path(cache_dir, data.iso3).write_text(
         json.dumps(
-            {"name": data.name, "last_actual_year": data.last_actual_year, "downloaded": data.downloaded},
+            {"name": data.name, "last_actual_year": data.last_actual_year, "downloaded": data.downloaded, "start": start},
             indent=2,
         )
     )
@@ -202,7 +202,7 @@ def get_country(
     """
     iso3 = iso3.upper()
     if not refresh:
-        cached = _read_cache(cache_dir, iso3, max_age_days)
+        cached = _read_cache(cache_dir, iso3, max_age_days, start)
         if cached is not None:
             return cached
 
@@ -217,5 +217,5 @@ def get_country(
     except requests.RequestException:
         name = iso3
     data = CountryData(iso3, name, table, last_actual, datetime.now().date().isoformat())
-    _write_cache(cache_dir, data)
+    _write_cache(cache_dir, data, start)
     return data

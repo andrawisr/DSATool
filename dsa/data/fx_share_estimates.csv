@@ -1,0 +1,197 @@
+iso3,fx_share,method,source,as_of,coverage_vs_weo,quality
+ABW,,missing,No estimate found: enter from the Article IV,,,none
+AFG,,missing,No estimate found: enter from the Article IV,,,none
+AGO,,missing,No estimate found: enter from the Article IV,,,none
+ALB,43.0,qpsd_currency,"World Bank QPSD, general government",2026Q2,0.89,high
+AND,,missing,No estimate found: enter from the Article IV,,,none
+ARE,,missing,No estimate found: enter from the Article IV,,,none
+ARG,52.3,qpsd_currency,"World Bank QPSD, central government",2026Q2,0.89,high
+ARM,46.0,qpsd_currency,"World Bank QPSD, central government",2026Q2,0.86,high
+ATG,,missing,No estimate found: enter from the Article IV,,,none
+AUS,1.0,rule_advanced,Advanced economy borrowing in own currency (assumed),,,medium
+AUT,0.1,qpsd_currency,"World Bank QPSD, general government",2025Q4,1.09,high
+AZE,,missing,No estimate found: enter from the Article IV,,,none
+BDI,,missing,No estimate found: enter from the Article IV,,,none
+BEL,0.0,rule_euro,Euro area member: euro is the domestic currency,,,high
+BEN,,missing,No estimate found: enter from the Article IV,,,none
+BFA,37.0,qpsd_currency,"World Bank QPSD, budgetary central government",2026Q2,0.96,high
+BGD,,missing,No estimate found: enter from the Article IV,,,none
+BGR,0.0,rule_euro,Euro area member: euro is the domestic currency,,,high
+BHR,,missing,No estimate found: enter from the Article IV,,,none
+BHS,,missing,No estimate found: enter from the Article IV,,,none
+BIH,53.2,qpsd_currency,"World Bank QPSD, general government",2026Q2,1.37,high
+BLR,,missing,No estimate found: enter from the Article IV,,,none
+BLZ,,missing,No estimate found: enter from the Article IV,,,none
+BOL,,missing,No estimate found: enter from the Article IV,,,none
+BRA,4.5,qpsd_currency,"World Bank QPSD, general government",2026Q2,0.81,high
+BRB,39.7,qpsd_currency,"World Bank QPSD, general government",2026Q2,0.97,high
+BRN,,missing,No estimate found: enter from the Article IV,,,none
+BTN,,missing,No estimate found: enter from the Article IV,,,none
+BWA,33.3,qpsd_currency,"World Bank QPSD, budgetary central government",2026Q2,0.75,high
+CAF,,missing,No estimate found: enter from the Article IV,,,none
+CAN,1.0,rule_advanced,Advanced economy borrowing in own currency (assumed),,,medium
+CHE,0.2,qpsd_currency,"World Bank QPSD, general government",2026Q2,0.98,high
+CHL,33.2,qpsd_currency,"World Bank QPSD, budgetary central government",2026Q2,0.97,high
+CHN,1.0,rule_advanced,Advanced economy borrowing in own currency (assumed),,,medium
+CIV,51.5,qpsd_currency,"World Bank QPSD, central government",2026Q2,1.01,high
+CMR,,missing,No estimate found: enter from the Article IV,,,none
+COD,90.4,qpsd_currency,"World Bank QPSD, central government",2024Q3,1.31,high
+COG,,missing,No estimate found: enter from the Article IV,,,none
+COL,22.7,qpsd_currency,"World Bank QPSD, general government",2026Q2,0.97,high
+COM,,missing,No estimate found: enter from the Article IV,,,none
+CPV,,missing,No estimate found: enter from the Article IV,,,none
+CRI,33.9,qpsd_currency,"World Bank QPSD, general government",2026Q2,1.0,high
+CYP,0.0,rule_euro,Euro area member: euro is the domestic currency,,,high
+CZE,5.1,qpsd_currency,"World Bank QPSD, budgetary central government",2026Q2,0.91,high
+DEU,0.0,rule_euro,Euro area member: euro is the domestic currency,,,high
+DJI,,missing,No estimate found: enter from the Article IV,,,none
+DMA,,missing,No estimate found: enter from the Article IV,,,none
+DNK,1.0,rule_advanced,Advanced economy borrowing in own currency (assumed),,,medium
+DOM,64.4,qpsd_currency,"World Bank QPSD, general government",2026Q2,0.8,high
+DZA,,missing,No estimate found: enter from the Article IV,,,none
+ECU,,missing,No estimate found: enter from the Article IV,,,none
+EGY,,missing,No estimate found: enter from the Article IV,,,none
+ERI,,missing,No estimate found: enter from the Article IV,,,none
+ESP,0.0,qpsd_currency,"World Bank QPSD, general government",2026Q2,1.09,high
+EST,0.0,rule_euro,Euro area member: euro is the domestic currency,,,high
+ETH,,missing,No estimate found: enter from the Article IV,,,none
+FIN,0.0,rule_euro,Euro area member: euro is the domestic currency,,,high
+FJI,35.8,qpsd_currency,"World Bank QPSD, general government",2025Q1,0.99,high
+FRA,0.0,rule_euro,Euro area member: euro is the domestic currency,,,high
+FSM,,missing,No estimate found: enter from the Article IV,,,none
+GAB,,missing,No estimate found: enter from the Article IV,,,none
+GBR,0.7,qpsd_currency,"World Bank QPSD, general government",2026Q2,1.44,high
+GEO,61.5,qpsd_currency,"World Bank QPSD, general government",2026Q2,0.93,high
+GHA,,missing,No estimate found: enter from the Article IV,,,none
+GIN,,missing,No estimate found: enter from the Article IV,,,none
+GMB,,missing,No estimate found: enter from the Article IV,,,none
+GNB,,missing,No estimate found: enter from the Article IV,,,none
+GNQ,,missing,No estimate found: enter from the Article IV,,,none
+GRC,0.0,qpsd_currency,"World Bank QPSD, budgetary central government",2026Q2,1.13,high
+GRD,,missing,No estimate found: enter from the Article IV,,,none
+GTM,43.3,qpsd_currency,"World Bank QPSD, general government",2026Q2,0.91,high
+GUY,,missing,No estimate found: enter from the Article IV,,,none
+HKG,1.0,rule_advanced,Advanced economy borrowing in own currency (assumed),,,medium
+HND,70.2,qpsd_currency,"World Bank QPSD, general government",2026Q1,0.9,high
+HRV,0.0,rule_euro,Euro area member: euro is the domestic currency,,,high
+HTI,,missing,No estimate found: enter from the Article IV,,,none
+HUN,29.8,qpsd_currency,"World Bank QPSD, general government",2026Q2,0.97,high
+IDN,30.3,qpsd_currency,"World Bank QPSD, general government",2026Q2,0.95,high
+IND,1.0,rule_advanced,Advanced economy borrowing in own currency (assumed),,,medium
+IRL,0.0,qpsd_currency,"World Bank QPSD, general government",2026Q2,1.1,high
+IRN,,missing,No estimate found: enter from the Article IV,,,none
+IRQ,,missing,No estimate found: enter from the Article IV,,,none
+ISL,10.9,qpsd_currency,"World Bank QPSD, general government",2026Q2,1.28,high
+ISR,13.9,qpsd_currency,"World Bank QPSD, central government",2026Q2,0.94,high
+ITA,0.0,qpsd_currency,"World Bank QPSD, general government",2026Q2,1.0,high
+JAM,,missing,No estimate found: enter from the Article IV,,,none
+JOR,,missing,No estimate found: enter from the Article IV,,,none
+JPN,1.0,rule_advanced,Advanced economy borrowing in own currency (assumed),,,medium
+KAZ,22.7,qpsd_currency,"World Bank QPSD, central government",2026Q2,0.8,high
+KEN,45.3,qpsd_currency,"World Bank QPSD, general government",2025Q4,0.99,high
+KGZ,52.2,qpsd_currency,"World Bank QPSD, central government",2026Q2,1.07,high
+KHM,98.3,qpsd_currency,"World Bank QPSD, budgetary central government",2026Q2,1.0,high
+KIR,,missing,No estimate found: enter from the Article IV,,,none
+KNA,,missing,No estimate found: enter from the Article IV,,,none
+KOR,1.0,rule_advanced,Advanced economy borrowing in own currency (assumed),,,medium
+KOS,,missing,No estimate found: enter from the Article IV,,,none
+KWT,,missing,No estimate found: enter from the Article IV,,,none
+LAO,,missing,No estimate found: enter from the Article IV,,,none
+LBN,97.7,qpsd_currency,"World Bank QPSD, general government",2024Q1,0.94,high
+LBR,,missing,No estimate found: enter from the Article IV,,,none
+LBY,,missing,No estimate found: enter from the Article IV,,,none
+LCA,57.6,qpsd_currency,"World Bank QPSD, general government",2026Q2,0.94,high
+LIE,,missing,No estimate found: enter from the Article IV,,,none
+LKA,42.3,qpsd_currency,"World Bank QPSD, central government",2026Q2,0.93,high
+LSO,80.4,qpsd_currency,"World Bank QPSD, budgetary central government",2025Q4,0.99,high
+LTU,0.0,qpsd_currency,"World Bank QPSD, general government",2026Q2,1.11,high
+LUX,0.0,rule_euro,Euro area member: euro is the domestic currency,,,high
+LVA,6.1,qpsd_currency,"World Bank QPSD, general government",2026Q2,1.24,high
+MAC,,missing,No estimate found: enter from the Article IV,,,none
+MAR,28.0,qpsd_currency,"World Bank QPSD, central government",2026Q2,0.99,high
+MDA,59.7,qpsd_currency,"World Bank QPSD, general government",2026Q2,0.9,high
+MDG,86.8,qpsd_currency,"World Bank QPSD, central government",2026Q2,0.67,high
+MDV,48.6,qpsd_currency,"World Bank QPSD, budgetary central government",2021Q3,0.78,high
+MEX,15.9,qpsd_currency,"World Bank QPSD, general government",2026Q2,0.81,high
+MHL,,missing,No estimate found: enter from the Article IV,,,none
+MKD,62.3,qpsd_currency,"World Bank QPSD, general government",2026Q2,0.96,high
+MLI,,missing,No estimate found: enter from the Article IV,,,none
+MLT,0.0,qpsd_currency,"World Bank QPSD, general government",2026Q2,0.98,high
+MMR,,missing,No estimate found: enter from the Article IV,,,none
+MNE,,missing,No estimate found: enter from the Article IV,,,none
+MNG,96.7,qpsd_currency,"World Bank QPSD, central government",2026Q2,0.67,high
+MOZ,,missing,No estimate found: enter from the Article IV,,,none
+MRT,,missing,No estimate found: enter from the Article IV,,,none
+MUS,15.8,qpsd_currency,"World Bank QPSD, general government",2026Q2,0.88,high
+MWI,39.4,qpsd_currency,"World Bank QPSD, budgetary central government",2020Q2,0.82,high
+MYS,1.2,qpsd_currency,"World Bank QPSD, budgetary central government",2026Q2,0.91,high
+NAM,,missing,No estimate found: enter from the Article IV,,,none
+NER,,missing,No estimate found: enter from the Article IV,,,none
+NGA,43.5,qpsd_currency,"World Bank QPSD, general government",2025Q2,0.88,high
+NIC,93.8,qpsd_currency,"World Bank QPSD, general government",2026Q1,1.03,high
+NLD,2.0,qpsd_currency,"World Bank QPSD, general government",2026Q2,1.07,high
+NOR,1.0,rule_advanced,Advanced economy borrowing in own currency (assumed),,,medium
+NPL,51.2,qpsd_currency,"World Bank QPSD, budgetary central government",2024Q3,0.92,high
+NRU,,missing,No estimate found: enter from the Article IV,,,none
+NZL,1.0,rule_advanced,Advanced economy borrowing in own currency (assumed),,,medium
+OMN,,missing,No estimate found: enter from the Article IV,,,none
+PAK,33.4,qpsd_currency,"World Bank QPSD, central government",2023Q2,1.1,high
+PAN,,missing,No estimate found: enter from the Article IV,,,none
+PER,41.1,qpsd_currency,"World Bank QPSD, general government",2026Q2,0.89,high
+PHL,,missing,No estimate found: enter from the Article IV,,,none
+PLW,,missing,No estimate found: enter from the Article IV,,,none
+PNG,48.7,qpsd_currency,"World Bank QPSD, general government",2024Q2,0.94,high
+POL,,missing,No estimate found: enter from the Article IV,,,none
+PRI,,missing,No estimate found: enter from the Article IV,,,none
+PRT,0.0,qpsd_currency,"World Bank QPSD, general government",2026Q2,1.13,high
+PRY,87.7,qpsd_currency,"World Bank QPSD, general government",2026Q2,0.81,high
+QAT,,missing,No estimate found: enter from the Article IV,,,none
+ROU,47.7,qpsd_currency,"World Bank QPSD, general government",2026Q2,1.08,high
+RUS,28.2,qpsd_currency,"World Bank QPSD, central government",2021Q3,1.04,high
+RWA,87.2,qpsd_currency,"World Bank QPSD, general government",2026Q2,0.92,high
+SAU,37.1,qpsd_currency,"World Bank QPSD, budgetary central government",2026Q2,0.94,high
+SDN,,missing,No estimate found: enter from the Article IV,,,none
+SEN,60.7,qpsd_currency,"World Bank QPSD, central government",2026Q2,,high
+SGP,1.0,rule_advanced,Advanced economy borrowing in own currency (assumed),,,medium
+SLB,69.9,qpsd_currency,"World Bank QPSD, central government",2026Q2,0.91,high
+SLE,,missing,No estimate found: enter from the Article IV,,,none
+SLV,43.5,qpsd_currency,"World Bank QPSD, general government",2026Q2,0.99,high
+SMR,,missing,No estimate found: enter from the Article IV,,,none
+SOM,,missing,No estimate found: enter from the Article IV,,,none
+SRB,78.8,qpsd_currency,"World Bank QPSD, budgetary central government",2026Q2,0.98,high
+SSD,,missing,No estimate found: enter from the Article IV,,,none
+STP,,missing,No estimate found: enter from the Article IV,,,none
+SUR,86.4,qpsd_currency,"World Bank QPSD, central government",2026Q2,0.9,high
+SVK,1.5,qpsd_currency,"World Bank QPSD, general government",2026Q2,1.06,high
+SVN,0.0,rule_euro,Euro area member: euro is the domestic currency,,,high
+SWE,3.6,qpsd_currency,"World Bank QPSD, general government",2026Q2,1.73,high
+SWZ,,missing,No estimate found: enter from the Article IV,,,none
+SYC,49.2,qpsd_currency,"World Bank QPSD, general government",2019Q4,0.96,high
+TCD,,missing,No estimate found: enter from the Article IV,,,none
+TGO,,missing,No estimate found: enter from the Article IV,,,none
+THA,0.7,qpsd_currency,"World Bank QPSD, general government",2026Q2,0.9,high
+TJK,84.9,qpsd_currency,"World Bank QPSD, central government",2026Q2,0.84,high
+TKM,,missing,No estimate found: enter from the Article IV,,,none
+TLS,34.6,qpsd_currency,"World Bank QPSD, budgetary central government",2026Q2,0.96,high
+TON,22.4,qpsd_currency,"World Bank QPSD, central government",2026Q2,0.95,high
+TTO,,missing,No estimate found: enter from the Article IV,,,none
+TUN,,missing,No estimate found: enter from the Article IV,,,none
+TUR,41.1,qpsd_currency,"World Bank QPSD, general government",2026Q2,1.04,high
+TUV,,missing,No estimate found: enter from the Article IV,,,none
+TWN,1.0,rule_advanced,Advanced economy borrowing in own currency (assumed),,,medium
+TZA,66.5,qpsd_currency,"World Bank QPSD, budgetary central government",2026Q2,0.96,high
+UGA,43.6,qpsd_currency,"World Bank QPSD, central government",2026Q2,0.94,high
+UKR,,missing,No estimate found: enter from the Article IV,,,none
+URY,40.8,qpsd_currency,"World Bank QPSD, central government",2026Q2,0.93,high
+USA,0.4,qpsd_currency,"World Bank QPSD, general government",2026Q2,1.04,high
+UZB,,missing,No estimate found: enter from the Article IV,,,none
+VCT,,missing,No estimate found: enter from the Article IV,,,none
+VEN,,missing,No estimate found: enter from the Article IV,,,none
+VNM,,missing,No estimate found: enter from the Article IV,,,none
+VUT,,missing,No estimate found: enter from the Article IV,,,none
+WBG,,missing,No estimate found: enter from the Article IV,,,none
+WSM,,missing,No estimate found: enter from the Article IV,,,none
+YEM,,missing,No estimate found: enter from the Article IV,,,none
+ZAF,9.0,qpsd_currency,"World Bank QPSD, general government",2026Q1,1.1,high
+ZMB,45.5,qpsd_currency,"World Bank QPSD, central government",2026Q2,0.9,high
+ZWE,,missing,No estimate found: enter from the Article IV,,,none

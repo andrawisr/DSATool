@@ -52,3 +52,11 @@ def test_real_country_download(iso3, tmp_path):
     # Second call is served from the cache with identical numbers.
     again = get_country(iso3, start=2010, cache_dir=tmp_path)
     pd.testing.assert_frame_equal(t, again.table, check_dtype=False, check_names=False)
+
+
+def test_fx_share_table_lookup():
+    from dsa.data.fx_share import lookup
+
+    assert lookup("BRA")["fx_share"] < 15  # Brazil borrows mostly in reais
+    assert lookup("DEU")["fx_share"] == 0.0  # euro is Germany's own currency
+    assert lookup("XXX")["fx_share"] is None  # unknown country -> no estimate
