@@ -13,6 +13,7 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from dsa.data import fx_share as fxs
+from dsa.data import maturity
 from dsa.data.weo import COUNTRY_SERIES, DERIVED_SERIES, WORLD_SERIES, get_country, list_countries
 from dsa.engine import baseline_from_weo, debt_path, historical_drivers, historical_stats
 from dsa.fanchart import fan_chart
@@ -87,10 +88,17 @@ if fx_info["fx_share"] is None:
 else:
     st.sidebar.caption(f"Estimate: {fx_default:.1f}%, {fx_info['source']}" + (f", {fx_info['as_of']}" if fx_info.get("as_of") else "") + f" (quality: {fx_info['quality']})")
 
+mat_info = maturity.lookup(iso3)
 repricing = st.sidebar.slider(
-    "Share of debt maturing or repricing each year (%)", 5, 100, 25, 5,
+    "Share of debt maturing or repricing each year (%)", 1, 100, int(round(mat_info["maturing_share"])), 1,
+    key=f"mat_{iso3}",
     help="Sets how fast an interest rate shock feeds into the average interest rate, and the amortisation in gross financing needs. 25% means an average maturity of about 4 years.",
 )
+mat_note = f"Estimate: {mat_info['maturing_share']:.0f}%, {mat_info['source']}" + (f", {mat_info['as_of']}" if mat_info.get("as_of") else "") + f" (quality: {mat_info['quality']})"
+if mat_info["quality"] == "none":
+    st.sidebar.warning("No maturity data for this country: using 25%. Check the Article IV for debt falling due within a year.")
+else:
+    st.sidebar.caption(mat_note)
 override_r = st.sidebar.checkbox(
     "Override effective interest rate",
     help="WEO gives net interest (interest paid minus interest received), which understates the rate for countries with large assets.",

@@ -73,3 +73,12 @@ def test_fiscal_year_markers():
     assert parse_year("FY2024/25") == 2024  # months unknown: start year
     assert parse_year("FY2025/2026", "April/March") == 2025
     assert parse_year("n/a") is None
+
+
+def test_maturity_table_lookup():
+    from dsa.data.maturity import DEFAULT_SHARE, lookup
+
+    bra = lookup("BRA")
+    assert 10 < bra["maturing_share"] < 50 and bra["quality"] == "high"
+    unknown = lookup("XXX")
+    assert unknown["maturing_share"] == DEFAULT_SHARE and unknown["quality"] == "none"
