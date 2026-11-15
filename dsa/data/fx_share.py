@@ -54,8 +54,16 @@ OWN_CURRENCY_ADVANCED = {
     # Large economies with negligible foreign-currency government debt.
     "CHN", "IND",
 }
+# Countries that use the US dollar or the euro as their own currency: their
+# "foreign" debt is in the currency they use, so there is no depreciation risk on it.
+OFFICIALLY_DOLLARISED = {
+    "ECU": "US dollar", "SLV": "US dollar", "PAN": "US dollar", "TLS": "US dollar",
+    "FSM": "US dollar", "MHL": "US dollar", "PLW": "US dollar",
+    "MNE": "euro", "XKX": "euro", "KOS": "euro", "AND": "euro", "SMR": "euro",
+}
 
 QUALITY = {
+    "rule_dollarised": "high",
     "qpsd_currency": "high",
     "qpsd_external": "medium",
     "ids_external": "medium",
@@ -173,7 +181,7 @@ def _qpsd_candidates(weo: pd.DataFrame) -> tuple[dict, dict]:
 
 def _ids_candidates(weo: pd.DataFrame) -> dict:
     try:
-        ids = _wb_series("DT.DOD.DPPG.CD", source=6, dates="2019:2025")
+        ids = _wb_series("DT.DOD.DPPG.CD", source=2, dates="2019:2025")  # IDS series, served via WDI
     except (requests.RequestException, ValueError) as exc:
         print(f"Skipping World Bank IDS (service unavailable: {exc}). Re-run later to fill gaps.")
         return {}
@@ -212,7 +220,10 @@ def build_table() -> pd.DataFrame:
     for iso3 in countries:
         if iso3.startswith("G") and iso3[1:].isdigit():
             continue  # WEO regional aggregates, not countries
-        if iso3 in EURO_AREA:
+        if iso3 in OFFICIALLY_DOLLARISED:
+            ccy = OFFICIALLY_DOLLARISED[iso3]
+            est = {"fx_share": 0.0, "method": "rule_dollarised", "source": f"Uses the {ccy} as its currency, so its {ccy} debt is domestic-currency debt", "as_of": "", "coverage_vs_weo": None}
+        elif iso3 in EURO_AREA:
             est = {"fx_share": 0.0, "method": "rule_euro", "source": "Euro area member: euro is the domestic currency", "as_of": "", "coverage_vs_weo": None}
             if iso3 in by_currency:  # keep the small non-euro share where it is reported
                 est = by_currency[iso3]
