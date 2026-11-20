@@ -7,6 +7,7 @@ It opens in your browser at http://localhost:8501 and runs only on this computer
 from __future__ import annotations
 
 import io
+from pathlib import Path
 
 import pandas as pd
 import plotly.graph_objects as go
@@ -49,12 +50,23 @@ def load(iso3: str, refresh_token: int):
     return get_country(iso3, refresh=refresh_token > 0)
 
 
+COVERED_PATH = Path(__file__).parent / "dsa" / "data" / "countries_covered.csv"
+
+
 @st.cache_data
 def countries() -> dict[str, str]:
+    """Countries shown in the dropdown: those listed in dsa/data/countries_covered.csv.
+
+    To add or remove a country, add or delete its row in that file. If the file
+    is missing, every IMF country is shown.
+    """
     try:
         names = list_countries()
     except Exception:
         names = {}
+    if COVERED_PATH.exists():
+        covered = pd.read_csv(COVERED_PATH)
+        names = {iso: names.get(iso, name).strip() for iso, name in zip(covered["iso3"], covered["name"])}
     return dict(sorted(names.items(), key=lambda kv: kv[1]))
 
 
@@ -66,7 +78,9 @@ def cached_fan(_baseline, history, key):
 def describe(info: dict, field: str) -> str:
     """Caption under an input: where its starting value came from."""
     label = "Article IV" if info.get("method") == "override" else "Estimate"
-    text = f"{label}: {info[field]:.1f}%, {info['source']}" + (f", {info['as_of']}" if info.get("as_of") else "")
+    as_of = info.get("as_of")
+    has_date = isinstance(as_of, str) and as_of.strip() != "" and as_of.lower() != "nan"
+    text = f"{label}: {info[field]:.1f}%, {info['source']}" + (f", {as_of}" if has_date else "")
     if info.get("method") == "override":
         auto = info.get("automatic_estimate")
         return text + (f". Automatic estimate was {auto:.1f}%." if auto is not None else ".")
