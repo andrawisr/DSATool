@@ -2,3 +2,68 @@ iso3,field,value,source,as_of
 EGY,fx_share,40,"IMF 2025 Article IV (Country Report 25/186), Annex II Figure 3: foreign-currency debt about 37 of 93 percent of GDP at end-FY2024/25 (read from chart); projected to fall to about 25% by FY2029/30",FY2024/25
 EGY,maturing_share,40,"IMF 2025 Article IV (Country Report 25/186), Annex II Figure 4: debt service minus interest averages 40% of the previous year's debt over FY2024/25-FY2029/30 (large short-term T-bill issuance)",FY2024/25-FY2029/30
 EGY,foreign_private_share,13,"IMF 2025 Article IV (Country Report 25/186), Annex II Figure 3: external private creditors about 13 of 97 percent of GDP in 2024 (read from chart)",2024
+SAU,fx_share,38,"IMF 2026 Article IV (Country Report 26/210), debt sustainability annex: debt by currency chart, 12 of 32% of GDP in 2025 (read from chart)",2026
+SAU,foreign_private_share,37,"IMF 2026 Article IV (Country Report 26/210), debt sustainability annex: debt by holder chart, external private creditors about 12 of 32% of GDP in 2025 (read from chart)",2026
+SAU,maturing_share,5,"IMF 2026 Article IV (Country Report 26/210), debt sustainability annex: baseline table, debt service minus interest as a share of the previous year's debt, average 2026-30",2026
+ARE,fx_share,58,"IMF 2025 Article IV (Country Report 25/327), debt sustainability annex: debt by currency chart, 20 of 34.5% of GDP in 2025 (read from chart)",2025
+ARE,foreign_private_share,56,"IMF 2025 Article IV (Country Report 25/327), debt sustainability annex: debt by holder chart, about 19.5 of 35% of GDP in 2024 (read from chart)",2025
+ARE,maturing_share,17,"IMF 2025 Article IV (Country Report 25/327), debt sustainability annex: baseline table, debt service minus interest as a share of the previous year's debt, average 2025-29",2025
+KWT,fx_share,70,"IMF 2025 Article IV (Country Report 26/52), debt sustainability annex: debt by currency chart, projected share as debt is rebuilt (2026-30); nearly all of the 3% of GDP stock in 2024 (read from chart)",2025
+KWT,foreign_private_share,80,"IMF 2025 Article IV (Country Report 26/52), debt sustainability annex: debt by holder chart, about 5 of 6% of GDP in 2024 (read from chart)",2025
+KWT,maturing_share,24,"IMF 2025 Article IV (Country Report 26/52), debt sustainability annex: baseline table, debt service minus interest as a share of the previous year's debt, average 2025-29",2025
+QAT,fx_share,54,"IMF 2024 Article IV (Country Report 25/47), debt sustainability annex: debt by currency chart, 23.5 of 43.5% of GDP in 2023 (read from chart)",2024
+QAT,foreign_private_share,40,"IMF 2024 Article IV (Country Report 25/47), debt sustainability annex: debt by holder chart, about 19 of 47% of GDP in 2023 (read from chart)",2024
+QAT,maturing_share,5,"IMF 2024 Article IV (Country Report 25/47), debt sustainability annex: baseline table, debt service minus interest as a share of the previous year's debt, average 2024-28",2024
+OMN,fx_share,70,"IMF 2025 Article IV (Country Report 26/4), debt sustainability annex: debt by currency chart, 25 of 35.5% of GDP in 2024 (read from chart)",2025
+OMN,foreign_private_share,69,"IMF 2025 Article IV (Country Report 26/4), debt sustainability annex: debt by holder chart, about 24.5 of 35.5% of GDP in 2024 (read from chart)",2025
+OMN,maturing_share,10,"IMF 2025 Article IV (Country Report 26/4), debt sustainability annex: baseline table, debt service minus interest as a share of the previous year's debt, average 2026-29 (2025 distorted by buybacks)",2025
+POL,fx_share,25,"IMF 2025 Article IV (Country Report 26/25), debt sustainability annex: debt by currency chart, 15 of 59% of GDP in 2025 (read from chart)",2025
+POL,foreign_private_share,15,"IMF 2025 Article IV (Country Report 26/25), debt sustainability annex: debt by holder chart, about 8 of 55% of GDP in 2024 (read from chart)",2025
+POL,maturing_share,11,"IMF 2025 Article IV (Country Report 26/25), debt sustainability annex: baseline table, debt service minus interest as a share of the previous year's debt, average 2025-29",2025
+HUN,fx_share,33,"IMF 2025 Article IV (Country Report 25/250), debt sustainability annex: debt by currency chart, 24.5 of 74% of GDP in 2025 (read from chart)",2025
+HUN,foreign_private_share,36,"IMF 2025 Article IV (Country Report 25/250), debt sustainability annex: debt by holder chart, about 26.5 of 73.5% of GDP in 2024 (read from chart)",2025
+HUN,maturing_share,18,"IMF 2025 Article IV (Country Report 25/250), debt sustainability annex: baseline table, debt service minus interest as a share of the previous year's debt, average 2025-29",2025
+CHL,fx_share,34,"IMF 2026 Article IV (Country Report 26/169), debt sustainability annex: debt by currency chart, 14 of 41.5% of GDP in 2025 (report: about a third) (read from chart)",2026
+CHL,foreign_private_share,40,"IMF 2026 Article IV (Country Report 26/169), debt sustainability annex: debt by holder chart, about 16.5 of 41.5% of GDP in 2025 (read from chart)",2026
+CHL,maturing_share,8,"IMF 2026 Article IV (Country Report 26/169), debt sustainability annex: baseline table, debt service minus interest as a share of the previous year's debt, average 2026-30, read from table image",2026
+KOR,fx_share,0,"IMF 2025 Article IV (Country Report 25/308), debt sustainability annex: debt by currency chart, no foreign-currency debt shown (read from chart)",2025
+KOR,foreign_private_share,7,"IMF 2025 Article IV (Country Report 25/308), debt sustainability annex: debt by holder chart, about 3 of 44.5% of GDP in 2024 (read from chart)",2025
+KOR,maturing_share,4,"IMF 2025 Article IV (Country Report 25/308), debt sustainability annex: baseline table, debt service minus interest as a share of the previous year's debt, average 2025-29",2025
+SGP,fx_share,0,"IMF 2026 Article IV (Country Report 26/185), debt sustainability annex: debt by currency chart, all debt in Singapore dollars (read from chart)",2026
+SGP,foreign_private_share,0,"IMF 2026 Article IV (Country Report 26/185), debt sustainability annex: debt by holder chart, report: no external public debt (read from chart)",2026
+SGP,maturing_share,12,"IMF 2026 Article IV (Country Report 26/185), debt sustainability annex: baseline table, debt service minus interest as a share of the previous year's debt, average 2026-30, read from table image; debt is issued for CPF and reserve management, not to fund deficits",2026
+HKG,fx_share,85,"IMF 2026 Article IV (Country Report 26/114), debt sustainability annex: debt by currency chart, about 10.5 of 12.3% of GDP in 2025 (rest local-linked) (read from chart)",2026
+HKG,maturing_share,6,"IMF 2026 Article IV (Country Report 26/114), debt sustainability annex: baseline table, debt service minus interest as a share of the previous year's debt, average 2025-29",2026
+DZA,fx_share,1,"IMF 2026 Article IV (Country Report 26/252), debt sustainability annex: debt by currency chart, report: about 99% of debt held domestically in dinars (read from chart)",2026
+DZA,foreign_private_share,0,"IMF 2026 Article IV (Country Report 26/252), debt sustainability annex: debt by holder chart, no external private creditors shown (read from chart)",2026
+DZA,maturing_share,11,"IMF 2026 Article IV (Country Report 26/252), debt sustainability annex: baseline table, debt service minus interest as a share of the previous year's debt, average 2025-29",2026
+NAM,fx_share,11,"IMF 2026 Article IV (Country Report 26/135), debt sustainability annex: debt by currency chart, 7.5 of 66% of GDP in 2025, after the 2025 Eurobond repayment (about 22% in 2024) (read from chart)",2026
+NAM,foreign_private_share,2,"IMF 2026 Article IV (Country Report 26/135), debt sustainability annex: debt by holder chart, about 1 of 66% of GDP in 2025 (read from chart)",2026
+NAM,maturing_share,30,"IMF 2026 Article IV (Country Report 26/135), debt sustainability annex: baseline table, debt service minus interest as a share of the previous year's debt, average 2026-30",2026
+PAN,fx_share,0,"IMF 2025 Article IV (Country Report 25/245), debt sustainability annex: debt by currency chart, dollarised: US dollar debt is local currency (read from chart)",2025
+PAN,foreign_private_share,65,"IMF 2025 Article IV (Country Report 25/245), debt sustainability annex: debt by holder chart, about 42 of 65% of GDP in 2024 (read from chart)",2025
+PAN,maturing_share,8,"IMF 2025 Article IV (Country Report 25/245), debt sustainability annex: baseline table, debt service minus interest as a share of the previous year's debt, average 2025-29",2025
+TTO,fx_share,32,"IMF 2026 Article IV (Country Report 26/120), debt sustainability annex: debt by currency chart, 21.5 of 68% of GDP in FY2025 (read from chart)",2026
+TTO,foreign_private_share,18,"IMF 2026 Article IV (Country Report 26/120), debt sustainability annex: debt by holder chart, about 12.5 of 68% of GDP in FY2025 (read from chart)",2026
+TTO,maturing_share,12,"IMF 2026 Article IV (Country Report 26/120), debt sustainability annex: baseline table, debt service minus interest as a share of the previous year's debt, average 2026-30",2026
+BHS,fx_share,48,"IMF 2025 Article IV (Country Report 26/31), debt sustainability annex: debt by currency chart, 37 of 77.4% of GDP in FY2025 (read from chart)",2025
+BHS,foreign_private_share,32,"IMF 2025 Article IV (Country Report 26/31), debt sustainability annex: debt by holder chart, about 25 of 77% of GDP in FY2025 (read from chart)",2025
+BHS,maturing_share,27,"IMF 2025 Article IV (Country Report 26/31), debt sustainability annex: baseline table, debt service minus interest as a share of the previous year's debt, average FY2026-30, read from table image",2025
+HRV,fx_share,0,"IMF 2025 Article IV (Country Report 25/329), debt sustainability annex: debt by currency chart, euro debt is local currency since 2023 (read from chart)",2025
+HRV,foreign_private_share,21,"IMF 2025 Article IV (Country Report 25/329), debt sustainability annex: debt by holder chart, about 12 of 58% of GDP in 2024 (read from chart)",2025
+HRV,maturing_share,5,"IMF 2025 Article IV (Country Report 25/329), debt sustainability annex: baseline table, debt service minus interest as a share of the previous year's debt, average 2025-29",2025
+EST,fx_share,0,"IMF 2026 Article IV (Country Report 26/243), debt sustainability annex: debt by currency chart, euro debt is local currency (read from chart)",2026
+EST,foreign_private_share,48,"IMF 2026 Article IV (Country Report 26/243), debt sustainability annex: debt by holder chart, about 11.7 of 24% of GDP in 2025 (read from chart)",2026
+EST,maturing_share,5,"IMF 2026 Article IV (Country Report 26/243), debt sustainability annex: baseline table, debt service minus interest as a share of the previous year's debt, average 2026-30",2026
+LVA,fx_share,2,"IMF 2026 Article IV (Country Report 26/248), debt sustainability annex: debt by currency chart, about 1 of 46% of GDP in 2025 (read from chart)",2026
+LVA,foreign_private_share,40,"IMF 2026 Article IV (Country Report 26/248), debt sustainability annex: debt by holder chart, about 18 of 44% of GDP in 2024 (read from chart)",2026
+LVA,maturing_share,10,"IMF 2026 Article IV (Country Report 26/248), debt sustainability annex: baseline table, debt service minus interest as a share of the previous year's debt, average 2026-30",2026
+SVN,fx_share,3,"IMF 2025 Article IV (Country Report 26/15), debt sustainability annex: debt by currency chart, about 2 of 66% of GDP in 2025 (read from chart)",2025
+SVN,foreign_private_share,35,"IMF 2025 Article IV (Country Report 26/15), debt sustainability annex: debt by holder chart, report: 35% in 2024 (read from chart)",2025
+SVN,maturing_share,7,"IMF 2025 Article IV (Country Report 26/15), debt sustainability annex: baseline table, debt service minus interest as a share of the previous year's debt, average 2025-29",2025
+KOS,fx_share,10,"IMF 2026 Article IV (Country Report 26/79), debt sustainability annex: debt by currency chart, about 1.8 of 17.7% of GDP in 2025 (euro is local currency) (read from chart)",2026
+KOS,foreign_private_share,4,"IMF 2026 Article IV (Country Report 26/79), debt sustainability annex: debt by holder chart, about 0.7 of 18% of GDP in 2024 (read from chart)",2026
+KOS,maturing_share,14,"IMF 2026 Article IV (Country Report 26/79), debt sustainability annex: baseline table, debt service minus interest as a share of the previous year's debt, average 2025-29",2026
+UZB,fx_share,90,"IMF 2026 Article IV (Country Report 26/152), debt sustainability annex: debt by currency chart, external debt 25.9 of 28.6% of GDP in 2025 (currency-based definition) (read from chart)",2026
+UZB,foreign_private_share,15,"IMF 2026 Article IV (Country Report 26/152), debt sustainability annex: debt by holder chart, rough: commercial external plus domestic debt is 24% of PPG debt, of which domestic about 9% (read from chart)",2026
+UZB,maturing_share,16,"IMF 2026 Article IV (Country Report 26/152), debt sustainability annex: baseline table, debt service minus interest as a share of the previous year's debt, average rough: from the LIC DSA gross financing need with WEO primary balance and interest, 2026-30",2026

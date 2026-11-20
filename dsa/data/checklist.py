@@ -84,6 +84,8 @@ HEADERS = [
 
 def _pdf_for(iso3: str, name: str, pdfs: list[Path]) -> Path | None:
     first_word = name.split(",")[0].split()[0].lower()
+    if first_word in ("congo", "korea"):  # ambiguous first words: need the full name or code
+        first_word = name.lower()
     for p in pdfs:
         stem = p.stem.lower()
         if stem.startswith(iso3.lower()) or name.lower() in stem or stem.startswith(first_word):
@@ -93,7 +95,9 @@ def _pdf_for(iso3: str, name: str, pdfs: list[Path]) -> Path | None:
 
 def build_rows() -> pd.DataFrame:
     covered = pd.read_csv(COVERED_PATH)
-    pdfs = sorted(FOLDER.glob("*.pdf")) if FOLDER.exists() else []
+    # Reports saved in article_iv/ or "Article IVs/" (with or without a .pdf ending).
+    pdfs = sorted(p for d in (FOLDER, ROOT / "Article IVs") if d.exists() for p in d.iterdir()
+                  if p.is_file() and not p.name.startswith(".") and p.suffix.lower() in ("", ".pdf"))
     links = pd.read_csv(LINKS_PATH, dtype=str).set_index("iso3") if LINKS_PATH.exists() else pd.DataFrame()
     rows = []
     for iso3, name in zip(covered["iso3"], covered["name"]):
