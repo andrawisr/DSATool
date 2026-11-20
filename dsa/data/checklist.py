@@ -27,6 +27,10 @@ ROOT = Path(__file__).resolve().parents[2]
 FOLDER = ROOT / "article_iv"
 CHECKLIST_PATH = FOLDER / "Article IV checklist.xlsx"
 COVERED_PATH = Path(__file__).with_name("countries_covered.csv")
+# Links to each country's latest Article IV, read from the IMF country pages
+# (imf.org/en/countries/<code>). Add or fix a row by hand when a new report is out.
+LINKS_PATH = Path(__file__).with_name("article_iv_links.csv")
+IMF_PAGE_CODE = {"KOS": "UVK"}  # the IMF's own code where it differs
 
 # Countries eligible for the IMF's concessional lending (PRGT) whose debt
 # analysis uses the joint IMF-World Bank low-income framework (LIC-DSF 2018).
@@ -70,7 +74,8 @@ PRIORITY_TEXT = {
 PRIORITY_FILL = {1: "F4CCCC", 2: "FCE5CD", 3: "FFF2CC", 4: "D9EAD3", 5: "CFE2F3"}
 
 HEADERS = [
-    "Priority", "Country", "Code", "Where to find the DSA", "Status",
+    "Priority", "Country", "Code", "Latest report (link)", "Published", "IMF country page (link)",
+    "Where to find the DSA", "Status",
     "Foreign-currency share now (%)", "Foreign-currency share source",
     "Maturing share now (%)", "Maturing share source",
     "What to take from the report", "Your notes",
@@ -89,6 +94,7 @@ def _pdf_for(iso3: str, name: str, pdfs: list[Path]) -> Path | None:
 def build_rows() -> pd.DataFrame:
     covered = pd.read_csv(COVERED_PATH)
     pdfs = sorted(FOLDER.glob("*.pdf")) if FOLDER.exists() else []
+    links = pd.read_csv(LINKS_PATH, dtype=str).set_index("iso3") if LINKS_PATH.exists() else pd.DataFrame()
     rows = []
     for iso3, name in zip(covered["iso3"], covered["name"]):
         name = name.strip()
@@ -139,6 +145,11 @@ def build_rows() -> pd.DataFrame:
             "Priority": PRIORITY_TEXT[prio],
             "Country": name,
             "Code": iso3,
+            "Latest report (link)": links.loc[iso3, "report"] if iso3 in links.index else "",
+            "_report_url": links.loc[iso3, "url"] if iso3 in links.index else "",
+            "Published": links.loc[iso3, "published"] if iso3 in links.index else "",
+            "IMF country page (link)": "" if iso3 == "TWN" else "Open country page",
+            "_page_url": "" if iso3 == "TWN" else f"https://www.imf.org/en/countries/{IMF_PAGE_CODE.get(iso3, iso3).lower()}",
             "Where to find the DSA": where,
             "Status": status,
             "Foreign-currency share now (%)": fx["fx_share"],
@@ -182,11 +193,17 @@ def write_checklist() -> Path:
             c.font = base
             c.alignment = Alignment(wrap_text=True, vertical="top")
         ws.cell(i, 1).fill = PatternFill("solid", fgColor=PRIORITY_FILL[r["prio"]])
-        for col in (6, 8):
+        for col, key in ((4, "_report_url"), (6, "_page_url")):
+            if r[key]:
+                ws.cell(i, col).hyperlink = r[key]
+                ws.cell(i, col).font = Font(name="Arial", size=10, color="0563C1", underline="single")
+        if not r["_report_url"] and r["_page_url"]:
+            ws.cell(i, 4).value = "Not collected: use the country page"
+        for col in (9, 11):
             ws.cell(i, col).number_format = "0.0"
         notes_cell = ws.cell(i, len(HEADERS))
         notes_cell.fill = PatternFill("solid", fgColor="FFFF00")
-    widths = [26, 24, 7, 44, 34, 14, 28, 12, 34, 44, 30]
+    widths = [26, 24, 7, 30, 11, 18, 44, 34, 14, 28, 12, 34, 44, 30]
     for j, w in enumerate(widths, start=1):
         ws.column_dimensions[get_column_letter(j)].width = w
     ws.freeze_panes = "C2"
@@ -199,7 +216,7 @@ def write_checklist() -> Path:
         ("Article IV download checklist", bold),
         ("", base),
         ("1. Work down the Checklist tab from the top: priority 1 countries have no automatic figure at all.", base),
-        ("2. Download the report named in 'Where to find the DSA' from the country's page on imf.org.", base),
+        ("2. Click 'Latest report (link)', or 'IMF country page' where no direct link was collected, and use 'Download PDF'.", base),
         ("3. Save it in this folder (dsa-tool/article_iv), named with the country code first, e.g. 'SAU 2025.pdf'.", base),
         ("4. Send Claude a batch of PDFs. Claude adds the figures to dsa/data/country_overrides.csv and shows old vs new.", base),
         ("5. Rebuild this file to update the Status column: .venv/bin/python -m dsa.data.checklist", base),
@@ -210,6 +227,8 @@ def write_checklist() -> Path:
         ("Where to find the DSA: emerging and advanced economies have an annex in the Article IV staff report.", base),
         ("Low-income countries have a separate joint IMF-World Bank DSA, often published with a programme review.", base),
         ("The low-income list is based on recent IMF reports; the report itself says which framework it uses.", base),
+        ("Direct links were collected in November 2026 for 48 countries before imf.org stopped answering automated requests.", base),
+        ("The country page always lists the newest Article IV at the top, so it stays current when new reports come out.", base),
         ("", base),
         ("Countries by priority", bold),
     ]
