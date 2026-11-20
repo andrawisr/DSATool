@@ -48,9 +48,11 @@ NO_RECENT_ARTICLE_IV = {
     "RUS": "No Article IV since 2021, so the latest figures are old.",
 }
 
-# Article IVs you saved that don't include the debt annex (the IMF published the
-# low-income DSA as a separate document).
-DSA_NOT_IN_REPORT = {"NER", "TJK", "TZA"}
+# Countries you've marked as having no DSA to use. They keep the automatic estimates.
+NO_DSA = {
+    "SEN": "No DSA available. The app uses the automatic estimates.",
+    "BHR": "No DSA available. The app uses the automatic estimates.",
+}
 
 FX_LABEL = {
     "override": "Article IV",
@@ -131,6 +133,8 @@ def build_rows() -> pd.DataFrame:
 
         if iso3 in NO_RECENT_ARTICLE_IV:
             where = NO_RECENT_ARTICLE_IV[iso3]
+        elif iso3 in NO_DSA:
+            where = NO_DSA[iso3]
         elif iso3 in LIC_DSF:
             where = "Separate joint IMF-World Bank 'Debt Sustainability Analysis' (low-income framework)"
         else:
@@ -143,8 +147,8 @@ def build_rows() -> pd.DataFrame:
             status = "Partly added: " + ", ".join(f for f, v in has.items() if v)
         elif iso3 in NO_RECENT_ARTICLE_IV:
             status = "No recent Article IV (see 'Where to find the DSA')"
-        elif iso3 in DSA_NOT_IN_REPORT:
-            status = "Saved report has no debt annex: download the separate DSA document"
+        elif iso3 in NO_DSA:
+            status = "No DSA"
         elif pdf is not None:
             status = f"PDF saved ({pdf.name}): send it to Claude"
         else:
