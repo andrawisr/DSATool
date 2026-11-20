@@ -78,8 +78,8 @@ def test_fiscal_year_markers():
 def test_maturity_table_lookup():
     from dsa.data.maturity import DEFAULT_SHARE, lookup
 
-    bra = lookup("BRA")
-    assert 10 < bra["maturing_share"] < 50 and bra["quality"] == "high"
+    deu = lookup("DEU")  # a country with no Article IV figures
+    assert 10 < deu["maturing_share"] < 50 and deu["quality"] == "high"
     unknown = lookup("XXX")
     assert unknown["maturing_share"] == DEFAULT_SHARE and unknown["quality"] == "none"
 
@@ -91,4 +91,4 @@ def test_article_iv_overrides_win():
     assert egy_fx["method"] == "override" and egy_fx["fx_share"] == 40.0
     assert egy_mat["method"] == "override" and egy_mat["maturing_share"] == 40.0
     assert egy_mat["automatic_estimate"] < 30  # the World Bank-based estimate it replaced
-    assert fx_share.lookup("BRA")["method"] != "override"
+    assert fx_share.lookup("DEU")["method"] != "override"
