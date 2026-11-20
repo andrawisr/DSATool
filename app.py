@@ -241,7 +241,12 @@ c1, c2, c3, c4 = st.columns(4)
 c1.metric(f"Debt / GDP, {last}", f"{table.loc[last, 'debt']:.1f}%")
 c2.metric(f"Baseline, {t_end}", f"{base_out['debt'].iloc[-1]:.1f}%", f"{base_out['debt'].iloc[-1] - table.loc[last, 'debt']:+.1f}pp", delta_color="inverse")
 c3.metric(f"Your scenario, {t_end}", f"{shock_out['debt'].iloc[-1]:.1f}%", f"{shock_out['debt'].iloc[-1] - base_out['debt'].iloc[-1]:+.1f}pp vs baseline", delta_color="inverse")
-c4.metric("Average GFN, first 5 years", f"{base_out['gross_financing_need'].iloc[:5].mean():.1f}% of GDP")
+gfn_base = base_out["gross_financing_need"].iloc[:5].mean()
+gfn_shock = shock_out["gross_financing_need"].iloc[:5].mean()
+c4.metric(
+    "Average GFN, first 5 years (your scenario)", f"{gfn_shock:.1f}% of GDP",
+    f"{gfn_shock - gfn_base:+.1f}pp vs baseline ({gfn_base:.1f}%)", delta_color="inverse",
+)
 st.caption(f"Source: IMF World Economic Outlook, downloaded {data.downloaded}. Actual data to {last}; later years are WEO projections, extended at constant drivers beyond the WEO horizon.")
 for note in baseline.notes:
     st.info(note)
