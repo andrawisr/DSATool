@@ -6,3 +6,6 @@ __pycache__/
 .venv/
 data_cache/
 .claude/
+
+# Article IV PDFs and the generated checklist (rebuild with python -m dsa.data.checklist)
+article_iv/
