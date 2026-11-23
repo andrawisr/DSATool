@@ -348,7 +348,12 @@ with tab_fan:
         st.warning("Not enough complete history to build a fan chart for this country.")
     else:
         key = (iso3, fx, repricing, tuple(overrides.items()), data.downloaded)
-        fan = cached_fan(baseline, history, key)
+        base_fan = cached_fan(baseline, history, key)
+        # With shocks set, the fan is centred on your scenario: the same historical
+        # surprises are added to the shocked path, and the stabilisation test uses
+        # the scenario's debt level and primary balance in the final fan year.
+        fan = cached_fan(shocked, history, key + (repr(shock),)) if has_shock else base_fan
+        centre = "Your scenario" if has_shock else "Baseline"
         fig = go.Figure()
         x = [last] + fan.years
         start = table.loc[last, "debt"]
@@ -357,17 +362,31 @@ with tab_fan:
             fig.add_scatter(x=x, y=[start] + list(fan.standard[hi]), line=dict(width=0), showlegend=False, hoverinfo="skip")
             fig.add_scatter(x=x, y=[start] + list(fan.standard[lo]), fill="tonexty", fillcolor=f"rgba({look.FAN_RGB},{alpha})", line=dict(width=0), name=label)
         fig.add_scatter(x=x, y=[start] + list(fan.standard["p50"]), name="Median", line=dict(color=COLOURS["baseline"], dash="dot"))
-        fig.add_scatter(x=x, y=[start] + list(fan.baseline), name="Baseline", line=dict(color="black", width=3))
-        fig.add_scatter(x=x, y=[start] + list(fan.historical["p20"]), name="20th percentile, historical fan", line=dict(color="#e67e22", dash="dash"))
+        if has_shock:
+            fig.add_scatter(x=x, y=[start] + list(fan.baseline), name="Your scenario", line=dict(color=COLOURS["custom"], width=3))
+        fig.add_scatter(x=x, y=[start] + list(base_fan.baseline), name="Baseline", line=dict(color="black", width=3))
+        fig.add_scatter(x=x, y=[start] + list(base_fan.historical["p20"]), name="20th percentile, historical fan", line=dict(color="#e67e22", dash="dash"))
         fig.update_layout(yaxis_title="Debt, % of GDP", height=480, legend=dict(orientation="h"), margin=dict(t=20))
+        if has_shock:
+            st.info("The fan, fan width and probability below are centred on **your scenario**. Set all shocks to zero to see the baseline fan.")
         st.plotly_chart(fig, width="stretch", theme=None)
         m1, m2, m3 = st.columns(3)
-        m1.metric("Fan width (5th–95th, final year)", f"{fan.width:.1f}pp")
-        m2.metric("Probability debt does not stabilise", f"{fan.prob_not_stabilising:.0f}%")
-        m3.metric("Realism flag", "Baseline below 20th pct" if fan.baseline_below_hist_p20 else "OK")
+        if has_shock:
+            m1.metric("Fan width (5th–95th, final year)", f"{fan.width:.1f}pp", f"{fan.width - base_fan.width:+.1f}pp vs baseline", delta_color="inverse")
+            m2.metric(
+                "Probability debt does not stabilise", f"{fan.prob_not_stabilising:.0f}%",
+                f"{fan.prob_not_stabilising - base_fan.prob_not_stabilising:+.0f}pp vs baseline ({base_fan.prob_not_stabilising:.0f}%)", delta_color="inverse",
+            )
+        else:
+            m1.metric("Fan width (5th–95th, final year)", f"{fan.width:.1f}pp")
+            m2.metric("Probability debt does not stabilise", f"{fan.prob_not_stabilising:.0f}%")
+        m3.metric("Realism flag (baseline)", "Baseline below 20th pct" if base_fan.baseline_below_hist_p20 else "OK")
         st.caption(
-            f"Method (MAC SRDSF 2021, Annex VI): {fan.draws:,} paths from 2-year blocks of the country's own historical surprises, {fan.history_years[0]}–{fan.history_years[1]}. "
-            "The realism flag compares the baseline with the 20th percentile of a history-only fan. Not replicated: starting-debt uncertainty and the IMF's skewed 'realism-adjusted' fan."
+            f"Method (MAC SRDSF 2021, Annex VI): {fan.draws:,} paths from 2-year blocks of the country's own historical surprises, {fan.history_years[0]}–{fan.history_years[1]}, "
+            f"added to the {centre.lower()} over {fan.years[0]}–{fan.years[-1]}. The probability compares the {centre.lower()}'s primary balance in {fan.years[-1]} with the balance "
+            f"needed to hold debt flat that year in each path; shocks after {fan.years[-1]} do not affect the fan. "
+            "The realism flag always tests the baseline forecast against the 20th percentile of a history-only fan. "
+            "Not replicated: starting-debt uncertainty and the IMF's skewed 'realism-adjusted' fan."
         )
 
 # ---------------------------------------------------------------- data + export
