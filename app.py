@@ -13,6 +13,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
+from dsa import style
 from dsa.data import fx_share as fxs
 from dsa.data import maturity, oil_trade
 from dsa.data import overrides as country_overrides
@@ -40,9 +41,10 @@ TABLE_ROWS = {
     "amortisation": "  of which: amortisation",
     "debt_stabilising_pb": "Debt-stabilising primary balance",
 }
-COLOURS = {"baseline": "#1f4e79", "custom": "#c0392b", "historical": "#7f8c8d"}
+COLOURS = style.CHART_COLOURS
 
 st.set_page_config(page_title="DSA Tool", layout="wide")
+style.apply()
 
 
 @st.cache_data(show_spinner="Downloading IMF WEO data…")
@@ -235,8 +237,8 @@ def yr_label(y: int) -> str:
 
 
 # ---------------------------------------------------------------- header
-st.title(f"{data.name}: debt sustainability analysis")
 t_end = base_out.index[-1]
+style.hero(data.name, f"IMF World Economic Outlook data, actual to {last}, projected to {t_end}.")
 c1, c2, c3, c4 = st.columns(4)
 c1.metric(f"Debt / GDP, {last}", f"{table.loc[last, 'debt']:.1f}%")
 c2.metric(f"Baseline, {t_end}", f"{base_out['debt'].iloc[-1]:.1f}%", f"{base_out['debt'].iloc[-1] - table.loc[last, 'debt']:+.1f}pp", delta_color="inverse")
@@ -244,7 +246,7 @@ c3.metric(f"Your scenario, {t_end}", f"{shock_out['debt'].iloc[-1]:.1f}%", f"{sh
 gfn_base = base_out["gross_financing_need"].iloc[:5].mean()
 gfn_shock = shock_out["gross_financing_need"].iloc[:5].mean()
 c4.metric(
-    "Average GFN, first 5 years (your scenario)", f"{gfn_shock:.1f}% of GDP",
+    "Your scenario: GFN, 5-yr avg", f"{gfn_shock:.1f}%",
     f"{gfn_shock - gfn_base:+.1f}pp vs baseline ({gfn_base:.1f}%)", delta_color="inverse",
 )
 st.caption(f"Source: IMF World Economic Outlook, downloaded {data.downloaded}. Actual data to {last}; later years are WEO projections, extended at constant drivers beyond the WEO horizon.")
@@ -265,7 +267,7 @@ with tab_paths:
     fig.add_scatter(x=joined(hs).index, y=joined(hs).values, name="Historical scenario", line=dict(color=COLOURS["historical"], dash="dot"))
     fig.add_vline(x=last + 0.5, line=dict(color="grey", dash="dash"))
     fig.update_layout(yaxis_title="Gross public debt, % of GDP", height=480, legend=dict(orientation="h"), margin=dict(t=20))
-    st.plotly_chart(fig, width="stretch")
+    st.plotly_chart(fig, width="stretch", theme=None)
     st.caption("Historical scenario: growth, primary balance, inflation, interest rate and depreciation at their 10-year averages (IMF A1 test).")
 
     st.subheader("Key assumptions")
@@ -293,7 +295,7 @@ with tab_drivers:
         fig.add_bar(x=out.index, y=out[col], name=label)
     fig.add_scatter(x=out.index, y=out["change_in_debt"], name="Change in debt", mode="markers", marker=dict(color="black", size=10, symbol="diamond"))
     fig.update_layout(barmode="relative", yaxis_title="Contribution to change in debt, pp of GDP", height=450, legend=dict(orientation="h"), margin=dict(t=20))
-    st.plotly_chart(fig, width="stretch")
+    st.plotly_chart(fig, width="stretch", theme=None)
     st.subheader("Debt decomposition (IMF Table A2 layout)")
     tbl = out[list(TABLE_ROWS)].rename(columns=TABLE_ROWS).T
     tbl.columns = [yr_label(c) for c in tbl.columns]
@@ -313,7 +315,7 @@ with tab_stress:
         style = dict(width=3) if label == "Baseline" else dict(width=1.5)
         fig.add_scatter(x=out.index, y=out["debt"], name=label, line=style)
     fig.update_layout(yaxis_title="Debt, % of GDP", height=480, legend=dict(orientation="v"), margin=dict(t=20))
-    st.plotly_chart(fig, width="stretch")
+    st.plotly_chart(fig, width="stretch", theme=None)
     y5 = base_out.index[min(4, len(base_out) - 1)]
     summary = pd.DataFrame(
         {
@@ -340,12 +342,12 @@ with tab_fan:
         bands = [("p5", "p95", "5th–95th", 0.15), ("p25", "p75", "25th–75th", 0.3)]
         for lo, hi, label, alpha in bands:
             fig.add_scatter(x=x, y=[start] + list(fan.standard[hi]), line=dict(width=0), showlegend=False, hoverinfo="skip")
-            fig.add_scatter(x=x, y=[start] + list(fan.standard[lo]), fill="tonexty", fillcolor=f"rgba(31,78,121,{alpha})", line=dict(width=0), name=label)
+            fig.add_scatter(x=x, y=[start] + list(fan.standard[lo]), fill="tonexty", fillcolor=f"rgba({style.FAN_RGB},{alpha})", line=dict(width=0), name=label)
         fig.add_scatter(x=x, y=[start] + list(fan.standard["p50"]), name="Median", line=dict(color=COLOURS["baseline"], dash="dot"))
         fig.add_scatter(x=x, y=[start] + list(fan.baseline), name="Baseline", line=dict(color="black", width=3))
         fig.add_scatter(x=x, y=[start] + list(fan.historical["p20"]), name="20th percentile, historical fan", line=dict(color="#e67e22", dash="dash"))
         fig.update_layout(yaxis_title="Debt, % of GDP", height=480, legend=dict(orientation="h"), margin=dict(t=20))
-        st.plotly_chart(fig, width="stretch")
+        st.plotly_chart(fig, width="stretch", theme=None)
         m1, m2, m3 = st.columns(3)
         m1.metric("Fan width (5th–95th, final year)", f"{fan.width:.1f}pp")
         m2.metric("Probability debt does not stabilise", f"{fan.prob_not_stabilising:.0f}%")

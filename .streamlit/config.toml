@@ -3,3 +3,12 @@ gatherUsageStats = false
 
 [server]
 headless = false
+
+# Research-report colours (see dsa/style.py). Delete this [theme] block to go
+# back to Streamlit's default colours.
+[theme]
+base = "light"
+primaryColor = "#36738A"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F5F7FB"
+textColor = "#2A3544"
