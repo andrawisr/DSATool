@@ -13,7 +13,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
-from dsa import style
+from dsa import style as look  # "look" so it can't clash with local variables
 from dsa.data import fx_share as fxs
 from dsa.data import maturity, oil_trade
 from dsa.data import overrides as country_overrides
@@ -41,10 +41,10 @@ TABLE_ROWS = {
     "amortisation": "  of which: amortisation",
     "debt_stabilising_pb": "Debt-stabilising primary balance",
 }
-COLOURS = style.CHART_COLOURS
+COLOURS = look.CHART_COLOURS
 
 st.set_page_config(page_title="DSA Tool", layout="wide")
-style.apply()
+look.apply()
 
 
 @st.cache_data(show_spinner="Downloading IMF WEO data…")
@@ -238,7 +238,7 @@ def yr_label(y: int) -> str:
 
 # ---------------------------------------------------------------- header
 t_end = base_out.index[-1]
-style.hero(data.name, f"IMF World Economic Outlook data, actual to {last}, projected to {t_end}.")
+look.hero(data.name, f"IMF World Economic Outlook data, actual to {last}, projected to {t_end}.")
 c1, c2, c3, c4 = st.columns(4)
 c1.metric(f"Debt / GDP, {last}", f"{table.loc[last, 'debt']:.1f}%")
 c2.metric(f"Baseline, {t_end}", f"{base_out['debt'].iloc[-1]:.1f}%", f"{base_out['debt'].iloc[-1] - table.loc[last, 'debt']:+.1f}pp", delta_color="inverse")
@@ -342,7 +342,7 @@ with tab_fan:
         bands = [("p5", "p95", "5th–95th", 0.15), ("p25", "p75", "25th–75th", 0.3)]
         for lo, hi, label, alpha in bands:
             fig.add_scatter(x=x, y=[start] + list(fan.standard[hi]), line=dict(width=0), showlegend=False, hoverinfo="skip")
-            fig.add_scatter(x=x, y=[start] + list(fan.standard[lo]), fill="tonexty", fillcolor=f"rgba({style.FAN_RGB},{alpha})", line=dict(width=0), name=label)
+            fig.add_scatter(x=x, y=[start] + list(fan.standard[lo]), fill="tonexty", fillcolor=f"rgba({look.FAN_RGB},{alpha})", line=dict(width=0), name=label)
         fig.add_scatter(x=x, y=[start] + list(fan.standard["p50"]), name="Median", line=dict(color=COLOURS["baseline"], dash="dot"))
         fig.add_scatter(x=x, y=[start] + list(fan.baseline), name="Baseline", line=dict(color="black", width=3))
         fig.add_scatter(x=x, y=[start] + list(fan.historical["p20"]), name="20th percentile, historical fan", line=dict(color="#e67e22", dash="dash"))
