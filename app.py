@@ -153,6 +153,19 @@ if override_r:
     overrides["effective_rate"] = st.sidebar.number_input("Effective interest rate (%)", -5.0, 50.0, float(table.loc[last, "effective_rate"]), 0.1)
 horizon = st.sidebar.slider("Projection horizon (years)", 5, 10, 10)
 
+
+def year_span(label: str, name: str, default: tuple[int, int] = (2, 3)) -> tuple[int, int]:
+    """A slider over calendar years; returns projection-year positions (1 = first projection year)."""
+    first, end = last + 1, last + horizon
+    lo, hi = st.slider(label, first, end, (last + default[0], last + default[1]), key=shock_key(name, horizon, last))
+    return lo - last, hi - last
+
+
+def year_pick(label: str, name: str, default: int = 2) -> int:
+    """A slider for one calendar year; returns its projection-year position."""
+    return st.slider(label, last + 1, last + horizon, last + default, key=shock_key(name, horizon, last)) - last
+
+
 st.sidebar.subheader("Your shocks")
 oil_info = oil_trade.lookup(iso3)
 net_oil = oil_info["net_oil_exports"]
@@ -163,16 +176,16 @@ else:
 oil_role = st.sidebar.radio("Oil (fiscal channel)", ["exporter", "importer", "none"], index=role_index, horizontal=True, key=f"oil_{iso3}")
 with st.sidebar.expander("Growth, rates, primary balance", expanded=True):
     g_pp = st.slider("Real growth (pp)", -10.0, 5.0, 0.0, 0.5, key=shock_key("g_pp"))
-    g_yrs = st.slider("Growth shock years", 1, horizon, (2, 3), key=shock_key("g_yrs", horizon))
+    g_yrs = year_span("Growth shock years", "g_yrs")
     r_bp = st.slider("Market interest rates (bp)", -300, 1000, 0, 25, key=shock_key("r_bp"))
-    r_from = st.slider("Rate shock starts in year", 1, horizon, 2, key=shock_key("r_from", horizon))
+    r_from = year_pick("Rate shock starts in", "r_from")
     pb_pp = st.slider("Primary balance (pp of GDP)", -8.0, 4.0, 0.0, 0.25, key=shock_key("pb_pp"))
-    pb_yrs = st.slider("Primary balance shock years", 1, horizon, (2, 3), key=shock_key("pb_yrs", horizon))
+    pb_yrs = year_span("Primary balance shock years", "pb_yrs")
 with st.sidebar.expander("Exchange rate and oil", expanded=True):
     dep = st.slider("One-off depreciation (%)", -20, 80, 0, 5, key=shock_key("dep"))
-    dep_yr = st.slider("Depreciation in year", 1, horizon, 2, key=shock_key("dep_yr", horizon))
+    dep_yr = year_pick("Depreciation in", "dep_yr")
     oil_pct = st.slider("Oil price change (%)", -70, 100, 0, 5, key=shock_key("oil_pct"))
-    oil_yrs = st.slider("Oil shock years", 1, horizon, (2, 3), key=shock_key("oil_yrs", horizon))
+    oil_yrs = year_span("Oil shock years", "oil_yrs")
     default_sens = 0.5 if oil_role == "exporter" else 0.9
     oil_sens = st.number_input(
         "Primary balance impact per 10% oil move (pp of GDP)", 0.0, 10.0, default_sens, 0.1, key=shock_key("oil_sens", oil_role),
@@ -181,7 +194,7 @@ with st.sidebar.expander("Exchange rate and oil", expanded=True):
     oil_growth = st.number_input("Growth impact per 10% oil move (pp)", 0.0, 5.0, 0.0, 0.1, key=shock_key("oil_growth"), help="The IMF paper gives no default; set your own.")
 with st.sidebar.expander("Current account and external financing", expanded=True):
     ca_pp = st.slider("Current account (pp of GDP)", -10.0, 5.0, 0.0, 0.25, key=shock_key("ca_pp"), help="Negative = a wider deficit (or smaller surplus) than the WEO baseline.")
-    ca_yrs = st.slider("Current account shock years", 1, horizon, (2, 3), key=shock_key("ca_yrs", horizon))
+    ca_yrs = year_span("Current account shock years", "ca_yrs")
     oil_ca = st.checkbox("Oil price also moves the current account", True, disabled=net_oil is None, key=shock_key("oil_ca"))
     if net_oil is not None:
         st.caption(
@@ -205,11 +218,11 @@ with st.sidebar.expander("Current account and external financing", expanded=True
     elif ext_stop:
         st.caption("No figure on file for this country: enter it from the Article IV (debt by holder chart).")
     rollover = st.slider("Foreign rollover rate in stress (%)", 0, 100, 67, 1, key=shock_key("rollover"), help="IMF default: 67%.")
-    stop_yrs = st.slider("Financing stop years", 1, horizon, (2, 3), key=shock_key("stop_yrs", horizon))
+    stop_yrs = year_span("Financing stop years", "stop_yrs")
     premium = st.slider("Extra cost of replacement borrowing (bp)", 0, 1500, 200, 25, key=shock_key("premium"))
 with st.sidebar.expander("Other"):
     cl = st.slider("Contingent liability (% of GDP, one-off)", 0.0, 30.0, 0.0, 0.5, key=shock_key("cl"))
-    cl_yr = st.slider("Contingent liability in year", 1, horizon, 2, key=shock_key("cl_yr", horizon))
+    cl_yr = year_pick("Contingent liability in", "cl_yr")
     interactions = st.checkbox("Apply IMF knock-on effects", True, key=shock_key("interactions"), help="Growth shocks lower inflation and raise spending/GDP; depreciation raises inflation; weaker primary balances raise borrowing costs (LIC-DSF 2018, Table 8).")
 
 # ---------------------------------------------------------------- run the model
@@ -304,7 +317,7 @@ with tab_drivers:
 
 # ---------------------------------------------------------------- stress tests
 with tab_stress:
-    st.write("IMF standard stress tests, applied to the baseline in projection years 2 and 3 (10-year history for averages and standard deviations).")
+    st.write(f"IMF standard stress tests, applied to the baseline in {last + 2} and {last + 3} (10-year history for averages and standard deviations).")
     results = {"Baseline": base_out, "Historical scenario": hs}
     if has_shock:
         results["Your scenario"] = shock_out
