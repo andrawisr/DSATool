@@ -1,9 +1,6 @@
 [browser]
 gatherUsageStats = false
 
-[server]
-headless = false
-
 # Research-report colours (see dsa/style.py). Delete this [theme] block to go
 # back to Streamlit's default colours.
 [theme]
