@@ -10,3 +10,6 @@ data_cache/
 # Article IV PDFs and the generated checklist (rebuild with python -m dsa.data.checklist)
 article_iv/
 Article IVs/
+
+# Passwords for running the app locally (never put these in Git)
+.streamlit/secrets.toml

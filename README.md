@@ -1,6 +1,6 @@
 # dsa-tool
 
-A private, IMF-style debt sustainability analysis (DSA) for any country. It runs only on your own computer.
+A private, IMF-style debt sustainability analysis (DSA) for any country. It runs on your own computer, or online behind a password (see "Put it online" below).
 
 ## Start the app
 
@@ -42,3 +42,19 @@ Tests include checking the engine against the IMF's worked example ("Ruritania",
 - WEO reports *net* interest, which understates the effective rate for countries with large financial assets. Use the override in the sidebar.
 - Gross financing needs use one "share of debt maturing each year" per country (estimated from World Bank data), not a bond-by-bond schedule. Estimates marked "low" quality (based on external debt service) can understate rollover for countries with short domestic debt, such as Egypt.
 - Not replicated: the IMF's mechanical risk signals (they need coefficients from the 2022 Staff Guidance Note), the GFN financeability module (needs creditor holdings data), the skewed "realism-adjusted" fan chart, and the LIC-DSF external DSA (needs present values of external debt and export data).
+
+## Put it online (free, password protected)
+
+The app can run on Streamlit Community Cloud. It is free, and it reads the code from a **private** GitHub repository.
+
+1. Put this folder in a private GitHub repository (the Article IV PDFs, the data cache and any local passwords stay out, see `.gitignore`).
+2. Go to share.streamlit.io, sign in with GitHub, choose **Create app**, pick the repository, branch `main` and file `app.py`.
+3. Under **Advanced settings**, choose the newest Python version offered, and in **Secrets** type one line:
+
+   ```toml
+   password = "choose a long password"
+   ```
+
+4. Deploy. Anyone with the link sees only a password box. To change the password later, edit it under the app's **Settings → Secrets**.
+
+How the password works is in `dsa/password.py`. On your own Mac with no password set, the app opens as before. Online with no password set, it refuses to open. Online, the app downloads WEO data from the IMF itself, so the first look at each country takes a few seconds.

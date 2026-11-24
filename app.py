@@ -1,7 +1,8 @@
 """DSA Tool: the screen you interact with.
 
 Start it with:   .venv/bin/streamlit run app.py
-It opens in your browser at http://localhost:8501 and runs only on this computer.
+It opens in your browser at http://localhost:8501. It can also be put online,
+behind a password (see dsa/password.py and the README).
 """
 
 from __future__ import annotations
@@ -13,6 +14,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
+from dsa import password
 from dsa import style as look  # "look" so it can't clash with local variables
 from dsa.data import fx_share as fxs
 from dsa.data import maturity, oil_trade
@@ -45,6 +47,7 @@ COLOURS = look.CHART_COLOURS
 
 st.set_page_config(page_title="DSA Tool", layout="wide")
 look.apply()
+password.check(look.hero)  # online, nothing below shows until the password is entered
 
 
 @st.cache_data(show_spinner="Downloading IMF WEO data…")
